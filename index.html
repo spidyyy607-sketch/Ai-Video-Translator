@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>TransReel v3.5 — AI Video Creator & Translator</title>
+  <title>TransReel v4.0 — Real AI Video Dubbing & Creator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
@@ -90,7 +90,7 @@
       background: rgba(6, 9, 17, 0.72); color: #fff; font-size: 13.5px; font-family: inherit; outline: none;
     }
     .input-field:focus { border-color: var(--neon-cyan); }
-    textarea.input-field { resize: none; min-height: 76px; line-height: 1.4; }
+    textarea.input-field { resize: none; min-height: 74px; line-height: 1.4; }
     .btn-primary {
       width: 100%; padding: 13px; border-radius: 14px; border: none; background: var(--accent-grad);
       color: #fff; font-weight: 700; font-size: 14.5px; cursor: pointer;
@@ -142,7 +142,6 @@
       pointer-events: none;
     }
 
-    /* Double-Tap Heart Animation */
     .heart-burst {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
       font-size: 96px; pointer-events: none; z-index: 30;
@@ -156,7 +155,6 @@
       100% { transform: translate(-50%, -50%) scale(1.4); opacity: 0; }
     }
 
-    /* Live 1-Tap Language Switcher */
     .live-lang-bar {
       position: absolute; top: 58px; left: 14px; right: 14px; z-index: 15;
       display: flex; align-items: center; gap: 6px; overflow-x: auto; scrollbar-width: none;
@@ -169,7 +167,13 @@
     }
     .lang-switch-btn.active { background: var(--accent-grad); color: #fff; border-color: transparent; box-shadow: 0 0 12px rgba(0, 229, 255, 0.45); }
 
-    /* Dual Subtitles */
+    .real-dub-pill {
+      position: absolute; top: 96px; left: 14px; z-index: 15;
+      padding: 5px 12px; border-radius: 999px;
+      background: rgba(0, 229, 255, 0.22); border: 1px solid var(--neon-cyan);
+      color: #fff; font-size: 11px; font-weight: 800; backdrop-filter: blur(10px);
+    }
+
     .dual-sub-box {
       position: absolute; left: 14px; right: 72px; bottom: 205px; z-index: 12;
       background: rgba(6, 9, 17, 0.78); backdrop-filter: blur(10px);
@@ -178,7 +182,6 @@
     .sub-orig { font-size: 11.5px; color: #94a3b8; margin-bottom: 3px; }
     .sub-trans { font-size: 13px; color: #fff; font-weight: 600; line-height: 1.35; }
 
-    /* Right Action Bar */
     .reel-actions {
       position: absolute; right: 12px; bottom: 88px; z-index: 14;
       display: flex; flex-direction: column; align-items: center; gap: 13px;
@@ -194,7 +197,6 @@
     .action-btn.ai-sum-btn .action-icon { background: rgba(0, 229, 255, 0.18); border-color: var(--neon-cyan); }
     .action-label { font-size: 10.5px; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.85); }
 
-    /* Bottom Reel Info */
     .reel-info { position: absolute; left: 16px; right: 72px; bottom: 86px; z-index: 12; }
     .creator-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
     .creator-clickable { display: flex; align-items: center; gap: 8px; cursor: pointer; }
@@ -237,7 +239,7 @@
     .modal-sheet {
       width: 100%; max-height: 92%; background: var(--bg-surface);
       border-top: 1px solid var(--glass-border); border-radius: 26px 26px 0 0;
-      padding: 16px 18px 26px; overflow-y: auto; transform: translateY(30px); transition: transform 0.22s ease;
+      padding: 16px 18px 28px; overflow-y: auto; transform: translateY(30px); transition: transform 0.22s ease;
     }
     .modal-backdrop.open .modal-sheet { transform: translateY(0); }
     .sheet-handle { width: 42px; height: 4px; border-radius: 99px; background: rgba(255,255,255,0.22); margin: 0 auto 12px; }
@@ -258,36 +260,45 @@
     .create-pane { display: none; }
     .create-pane.active { display: block; }
 
-    /* Voice-to-Video Mic UI */
     .mic-box {
-      display: flex; flex-direction: column; align-items: center; padding: 16px;
+      display: flex; flex-direction: column; align-items: center; padding: 14px;
       border-radius: 18px; background: rgba(0, 229, 255, 0.05); border: 1px solid rgba(0, 229, 255, 0.25);
       margin-bottom: 12px; text-align: center;
     }
     .mic-btn {
-      width: 68px; height: 68px; border-radius: 50%; border: none; background: var(--accent-grad);
-      color: #fff; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 24px rgba(0, 229, 255, 0.4); margin-bottom: 10px; transition: transform 0.15s;
+      width: 64px; height: 64px; border-radius: 50%; border: none; background: var(--accent-grad);
+      color: #fff; font-size: 26px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 24px rgba(0, 229, 255, 0.4); margin-bottom: 8px;
     }
-    .mic-btn.recording {
-      background: linear-gradient(135deg, #ff2a6d, #ff6b00);
-      animation: micPulse 1.1s infinite;
-    }
+    .mic-btn.recording { background: linear-gradient(135deg, #ff2a6d, #ff6b00); animation: micPulse 1.1s infinite; }
     @keyframes micPulse {
       0% { box-shadow: 0 0 0 0 rgba(255, 42, 109, 0.7); }
       70% { box-shadow: 0 0 0 18px rgba(255, 42, 109, 0); }
       100% { box-shadow: 0 0 0 0 rgba(255, 42, 109, 0); }
     }
+
     .ai-preview-box {
-      display: none; position: relative; border-radius: 16px; overflow: hidden;
-      border: 1px solid var(--neon-cyan); margin: 12px 0; background: #060911;
+      display: none; border-radius: 18px; overflow: hidden;
+      border: 1.5px solid var(--neon-cyan); margin: 14px 0; background: #060911;
+      box-shadow: 0 0 24px rgba(0, 229, 255, 0.22);
     }
     .ai-preview-box.show { display: block; }
-    .ai-preview-box video { width: 100%; height: 150px; object-fit: cover; display: block; }
-    .ai-preview-badge {
-      position: absolute; top: 8px; left: 8px; padding: 4px 10px; border-radius: 999px;
-      background: rgba(0, 229, 255, 0.92); color: #060911; font-size: 10.5px; font-weight: 800;
+    .preview-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 12px; background: rgba(0, 229, 255, 0.12); font-size: 11.5px; font-weight: 700; color: var(--neon-cyan);
     }
+    .ai-preview-box video { width: 100%; max-height: 240px; background: #000; display: block; }
+    .preview-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; background: rgba(14, 20, 36, 0.95); }
+    .btn-watch { padding: 9px; border-radius: 10px; border: none; background: var(--neon-cyan); color: #060911; font-weight: 800; font-size: 12.5px; cursor: pointer; }
+    .btn-regen { padding: 9px; border-radius: 10px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.08); color: #fff; font-weight: 700; font-size: 12.5px; cursor: pointer; }
+
+    /* Dubbing Status Box */
+    .dub-status-box {
+      display: none; margin-bottom: 12px; padding: 12px; border-radius: 14px;
+      background: rgba(0, 229, 255, 0.08); border: 1px solid rgba(0, 229, 255, 0.35);
+      font-size: 12.5px; color: #e2e8f0; line-height: 1.45;
+    }
+    .dub-status-box.show { display: block; }
 
     /* Profile */
     .ig-header { display: flex; align-items: center; gap: 18px; margin-bottom: 14px; }
@@ -341,10 +352,10 @@
 
     <!-- ================= LOGIN SCREEN ================= -->
     <div id="authScreen">
-      <div class="version-badge">TRANSREEL v3.5 • AI STUDIO</div>
+      <div class="version-badge">TRANSREEL v4.0 • REAL AI DUB</div>
       <div class="brand-logo">TR</div>
       <div class="brand-title">TransReel</div>
-      <div class="brand-sub">Create AI videos from Text or Voice, dub reels live, and connect globally.</div>
+      <div class="brand-sub">Real ElevenLabs AI Video Dubbing, Text/Voice-to-Video & Global Reels.</div>
       <div class="auth-card">
         <button class="btn-google" onclick="loginUser()"><span>G</span> Continue with Google</button>
         <div class="divider">or sign in with email</div>
@@ -382,7 +393,7 @@
       </button>
       <button class="nav-plus" onclick="openCreateModal()" title="Create Post">+</button>
       <button class="nav-item" onclick="openMyProfile('dubbed')">
-        <span class="nav-icon">📁</span><span>Dubbed (<span id="dubCountNav">1</span>)</span>
+        <span class="nav-icon">📁</span><span>Dubbed (<span id="dubCountNav">0</span>)</span>
       </button>
       <button class="nav-item" onclick="openMyProfile('reels')">
         <span class="nav-icon">👤</span><span>Profile</span>
@@ -401,23 +412,21 @@
       </div>
     </div>
 
-    <!-- ================= CREATE POST MODAL (3 TABS) ================= -->
+    <!-- ================= CREATE POST MODAL ================= -->
     <div id="createModal" class="modal-backdrop" onclick="closeModalOutside(event, 'createModal')">
       <div class="modal-sheet">
         <div class="sheet-handle"></div>
         <div class="sheet-header">
           <div class="sheet-title">Create AI Reel</div>
-          <button class="close-btn" onclick="closeModal('createModal')">✕</button>
+          <button class="close-btn" onclick="closeCreateModal()">✕</button>
         </div>
 
-        <!-- 3-Tab Switcher -->
         <div class="create-tabs">
           <button id="ctab-upload" class="create-tab-btn active" onclick="switchCreateTab('upload')">📤 Upload</button>
           <button id="ctab-text" class="create-tab-btn" onclick="switchCreateTab('text')">✨ Text to Video</button>
           <button id="ctab-voice" class="create-tab-btn" onclick="switchCreateTab('voice')">🎙️ Voice to Video</button>
         </div>
 
-        <!-- TAB 1: UPLOAD VIDEO -->
         <div id="pane-upload" class="create-pane active">
           <label class="upload-zone" for="postVideoInput">
             <div style="font-size:24px; margin-bottom:4px;">🎬</div>
@@ -427,11 +436,10 @@
           </label>
         </div>
 
-        <!-- TAB 2: TEXT TO VIDEO -->
         <div id="pane-text" class="create-pane">
           <div class="input-group">
             <label>Describe Your Video Idea</label>
-            <textarea id="t2vPrompt" class="input-field" placeholder="e.g., A futuristic neon car racing through Surat streets in 3D Pixar style..."></textarea>
+            <textarea id="t2vPrompt" class="input-field" placeholder="e.g., A futuristic neon car racing in 3D Pixar style..."></textarea>
           </div>
           <div style="font-size:11px; color:var(--text-muted); font-weight:700; margin-bottom:6px;">VIDEO STYLE</div>
           <div class="chip-row" id="t2vStyles">
@@ -440,10 +448,9 @@
             <button class="chip" onclick="selectStyleChip(this)">⚡ Cyberpunk</button>
             <button class="chip" onclick="selectStyleChip(this)">🎨 Anime</button>
           </div>
-          <button class="btn-primary" id="t2vGenBtn" onclick="generateAIVideo('text')" style="margin-bottom:12px;">✨ Generate AI Video</button>
+          <button class="btn-primary" id="t2vGenBtn" onclick="generateAIVideo('text')" style="margin-bottom:10px;">✨ Generate AI Video</button>
         </div>
 
-        <!-- TAB 3: VOICE TO VIDEO -->
         <div id="pane-voice" class="create-pane">
           <div class="mic-box">
             <button id="voiceMicBtn" class="mic-btn" onclick="toggleVoiceRecording()">🎙️</button>
@@ -454,16 +461,21 @@
             <label>Voice Prompt (Editable)</label>
             <textarea id="v2vPrompt" class="input-field" placeholder="Your spoken words will appear here..."></textarea>
           </div>
-          <button class="btn-primary" id="v2vGenBtn" onclick="generateAIVideo('voice')" style="margin-bottom:12px;">🎬 Turn Voice into AI Video</button>
+          <button class="btn-primary" id="v2vGenBtn" onclick="generateAIVideo('voice')" style="margin-bottom:10px;">🎬 Turn Voice into AI Video</button>
         </div>
 
-        <!-- Generated AI Video Preview -->
         <div id="aiPreviewBox" class="ai-preview-box">
-          <video id="aiPreviewVideo" autoplay loop muted playsinline></video>
-          <div class="ai-preview-badge" id="aiPreviewBadge">✨ AI Generated Preview</div>
+          <div class="preview-header">
+            <span id="aiPreviewBadge">✨ Video Ready — Watch Before Posting</span>
+            <span>HD</span>
+          </div>
+          <video id="aiPreviewVideo" controls playsinline></video>
+          <div class="preview-controls">
+            <button class="btn-watch" id="watchToggleBtn" onclick="togglePreviewPlay()">▶️ Play with Sound</button>
+            <button class="btn-regen" onclick="regeneratePreview()">🔄 Regenerate</button>
+          </div>
         </div>
 
-        <!-- Common Title, Hashtags & Publish -->
         <div class="ai-row">
           <label style="font-size:11.5px; color:var(--text-muted); font-weight:700;">TITLE & HASHTAGS</label>
           <button class="btn-ai" id="aiGenBtn" onclick="generateAIMetadata()">✨ Generate with AI</button>
@@ -476,42 +488,38 @@
           <input type="text" id="postTags" class="input-field" placeholder="#TransReel #AIVideo #Viral" />
         </div>
 
-        <button class="btn-primary" onclick="publishPost()">🚀 Publish to Feed</button>
+        <button class="btn-primary" id="publishBtn" onclick="publishPost()">🚀 Publish to Feed</button>
       </div>
     </div>
 
-    <!-- ================= AI DUBBING MODAL ================= -->
+    <!-- ================= REAL AI DUBBING MODAL (ELEVENLABS) ================= -->
     <div id="dubModal" class="modal-backdrop" onclick="closeModalOutside(event, 'dubModal')">
       <div class="modal-sheet">
         <div class="sheet-handle"></div>
         <div class="sheet-header">
-          <div class="sheet-title">AI Video Dubbing</div>
+          <div class="sheet-title">🎙️ Real AI Dubbing (ElevenLabs)</div>
           <button class="close-btn" onclick="closeModal('dubModal')">✕</button>
         </div>
 
         <label class="upload-zone" for="dubVideoInput">
           <div style="font-size:24px; margin-bottom:4px;">📤</div>
-          <div id="dubFileName" style="font-size:13px; font-weight:600;">Use Current Reel or Upload from Gallery</div>
-          <input type="file" id="dubVideoInput" accept="video/*" style="display:none;" onchange="handleDubFile(event)" />
+          <div id="dubFileName" style="font-size:13px; font-weight:600;">Use Current Reel or Upload Short Clip (&lt;3MB)</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:3px;">Powered by ElevenLabs Real Dubbing API</div>
+          <input type="file" id="dubVideoInput" accept="video/*,audio/*" style="display:none;" onchange="handleDubFile(event)" />
         </label>
 
         <div style="font-size:12px; color:var(--text-muted); font-weight:600; margin-bottom:8px;">TARGET LANGUAGE</div>
         <div class="chip-row" id="langChips">
-          <button class="chip selected" onclick="selectChip(this, 'lang')">Hindi 🇮🇳</button>
-          <button class="chip" onclick="selectChip(this, 'lang')">English 🇺🇸</button>
-          <button class="chip" onclick="selectChip(this, 'lang')">Spanish 🇪🇸</button>
-          <button class="chip" onclick="selectChip(this, 'lang')">Urdu 🇵🇰</button>
-          <button class="chip" onclick="selectChip(this, 'lang')">Arabic 🇸🇦</button>
+          <button class="chip selected" data-code="hi" onclick="selectChip(this, 'lang')">Hindi 🇮🇳</button>
+          <button class="chip" data-code="en" onclick="selectChip(this, 'lang')">English 🇺🇸</button>
+          <button class="chip" data-code="es" onclick="selectChip(this, 'lang')">Spanish 🇪🇸</button>
+          <button class="chip" data-code="ur" onclick="selectChip(this, 'lang')">Urdu 🇵🇰</button>
+          <button class="chip" data-code="ar" onclick="selectChip(this, 'lang')">Arabic 🇸🇦</button>
         </div>
 
-        <div style="font-size:12px; color:var(--text-muted); font-weight:600; margin-bottom:8px;">VOICE STYLE</div>
-        <div class="chip-row" id="voiceChips">
-          <button class="chip selected" onclick="selectChip(this, 'voice')">AI Voice</button>
-          <button class="chip" onclick="selectChip(this, 'voice')">Voice Cloning</button>
-          <button class="chip" onclick="selectChip(this, 'voice')">Storytelling</button>
-        </div>
+        <div id="dubStatusBox" class="dub-status-box"></div>
 
-        <button class="btn-primary" id="startDubBtn" onclick="startDubbing()">🎙️ Dub & Save to Dubbed Folder</button>
+        <button class="btn-primary" id="startDubBtn" onclick="startRealDubbing()">🎙️ Start Real AI Dubbing</button>
       </div>
     </div>
 
@@ -528,14 +536,14 @@
           <div class="ig-avatar-ring"><div class="ig-avatar-inner">AZ</div></div>
           <div class="ig-stats">
             <div><div class="ig-stat-num" id="myReelsCount">1</div><div class="ig-stat-lbl">Reels</div></div>
-            <div><div class="ig-stat-num" id="dubbedCount">1</div><div class="ig-stat-lbl">Dubbed</div></div>
+            <div><div class="ig-stat-num" id="dubbedCount">0</div><div class="ig-stat-lbl">Dubbed</div></div>
             <div><div class="ig-stat-num">12.4K</div><div class="ig-stat-lbl">Followers</div></div>
           </div>
         </div>
 
         <div class="ig-bio">
           <div class="ig-fullname">Mohammad Azam</div>
-          <div class="ig-bio-text">🎬 TransReel Creator | AI Video Dubbing & Text-to-Video<br>📍 Surat, India</div>
+          <div class="ig-bio-text">🎬 TransReel Creator | Real ElevenLabs AI Dubbing<br>📍 Surat, India</div>
         </div>
 
         <div class="ig-btn-row">
@@ -595,60 +603,64 @@
     ];
 
     const dubScripts = {
-      "ORIG": { code: "en-US", label: "Original", text: "Original audio playing. Tap any language above to dub live!" },
-      "Hindi 🇮🇳": { code: "hi-IN", label: "HI 🇮🇳", text: "नमस्ते दोस्तों! यह वीडियो TransReel AI से हिंदी में लाइव डब हो रहा है। अब कोई भी वीडियो अपनी भाषा में सुनें!" },
-      "English 🇺🇸": { code: "en-US", label: "EN 🇺🇸", text: "Hey everyone! This reel is live-dubbed into English using TransReel AI voice." },
+      "ORIG": { code: "en-US", label: "Original", text: "Original audio playing." },
+      "Hindi 🇮🇳": { code: "hi-IN", label: "HI 🇮🇳", text: "नमस्ते दोस्तों! यह वीडियो TransReel AI से हिंदी में लाइव डब हो रहा है।" },
+      "English 🇺🇸": { code: "en-US", label: "EN 🇺🇸", text: "Hey everyone! This reel is live-dubbed into English using TransReel AI." },
       "Spanish 🇪🇸": { code: "es-ES", label: "ES 🇪🇸", text: "¡Hola amigos! Este video está doblado en vivo al español con TransReel AI." },
       "Urdu 🇵🇰": { code: "ur-PK", label: "UR 🇵🇰", text: "السلام علیکم! یہ ویڈیو TransReel AI کے ذریعے اردو میں لائیو ڈب ہو رہی ہے۔" },
-      "Arabic 🇸🇦": { code: "ar-SA", label: "AR 🇸🇦", text: "مرحباً بالجميع! تمت دبلجة هذا الفيديو إلى اللغة العربية باستخدام TransReel AI." }
+      "Arabic 🇸🇦": { code: "ar-SA", label: "AR 🇸🇦", text: "مرحباً بالجميع! تمت دبلجة هذا الفيديو إلى اللغة العربية." }
     };
 
     const creators = {
-      "@neha_vlogs": { name: "Neha Sharma", initials: "NS", bio: "✈️ Travel & Tech Vlogger | Translating my reels into 10+ languages 🌍", followers: "48.2K", following: "312", followingMe: false },
+      "@neha_vlogs": { name: "Neha Sharma", initials: "NS", bio: "✈️ Travel & Tech Vlogger | Translating reels into 10+ languages 🌍", followers: "48.2K", following: "312", followingMe: false },
       "@tech_arjun": { name: "Arjun Verma", initials: "AV", bio: "🤖 AI & Future Tech | Daily 60-sec gadgets & AI dubbing demos ⚡", followers: "112K", following: "184", followingMe: false },
-      "@rohit_cinema": { name: "Rohit Kapoor", initials: "RK", bio: "🎥 Cinematography & Short Films | Watch in Hindi, English & Spanish 🎬", followers: "29.5K", following: "410", followingMe: false },
-      "@azam_creator": { name: "Mohammad Azam", initials: "AZ", bio: "🎬 TransReel Creator | AI Video Dubbing & Text-to-Video 📍 Surat, India", followers: "12.4K", following: "98", followingMe: true }
+      "@rohit_cinema": { name: "Rohit Kapoor", initials: "RK", bio: "🎥 Cinematography & Short Films | Watch in any language 🎬", followers: "29.5K", following: "410", followingMe: false },
+      "@azam_creator": { name: "Mohammad Azam", initials: "AZ", bio: "🎬 TransReel Creator | Real ElevenLabs AI Dubbing 📍 Surat, India", followers: "12.4K", following: "98", followingMe: true }
     };
 
     let reels = [
       {
         id: 1, creator: "@neha_vlogs",
-        title: "Tap + to try Text-to-Video & Voice-to-Video ✨ | Double-tap to Like ❤️",
-        tags: "#TransReel #TextToVideo #VoiceToVideo",
-        origSub: "Original (EN): Create AI videos or dub any reel in one tap.",
-        summary: "• High-energy demo clip.<br>• Try the new '+' button for Text-to-Video & Voice-to-Video.",
-        activeLang: "ORIG", dubVoice: "AI Voice", likes: 1240, liked: false, videoUrl: demoUrls[0]
+        title: "Tap 🌐 Real Dub to dub this video with ElevenLabs AI! 🔥",
+        tags: "#TransReel #RealAIDub #ElevenLabs",
+        origSub: "Original (EN): Tap 🌐 Real Dub on the right to translate with ElevenLabs.",
+        summary: "• Demo reel ready for real ElevenLabs AI Dubbing.<br>• Tap 🌐 Real Dub → Choose Hindi/Urdu/Spanish.",
+        activeLang: "ORIG", isRealDub: false, likes: 1240, liked: false, videoUrl: demoUrls[0]
       },
       {
         id: 2, creator: "@tech_arjun",
-        title: "Great Escape — Try 📖 Dual Subtitles to learn Spanish or Hindi!",
-        tags: "#AI #LearnLanguages #GlobalReels",
-        origSub: "Original (EN): Breaking language barriers with instant AI voice.",
-        summary: "• Highlights global content creation.<br>• Read Original + Translated subtitles together.",
-        activeLang: "ORIG", dubVoice: "AI Voice", likes: 892, liked: false, videoUrl: demoUrls[1]
+        title: "Great Escape — Try Real AI Dubbing in Hindi or Spanish 🌍",
+        tags: "#AI #GlobalReels #TransReel",
+        origSub: "Original (EN): Breaking language barriers with real AI voice.",
+        summary: "• Highlights global content creation.<br>• Supports real ElevenLabs voice translation.",
+        activeLang: "ORIG", isRealDub: false, likes: 892, liked: false, videoUrl: demoUrls[1]
       },
       {
         id: 3, creator: "@rohit_cinema",
-        title: "Tap @rohit_cinema DP to open Instagram-style Profile 🎬",
+        title: "Tap @rohit_cinema DP for Instagram-style Profile 🎬",
         tags: "#Cinema #TransReel #Viral",
-        origSub: "Original (EN): Cinematic storytelling for everyone, everywhere.",
+        origSub: "Original (EN): Cinematic storytelling for everyone.",
         summary: "• Short cinematic fun reel.<br>• Tap creator DP for full profile grid.",
-        activeLang: "ORIG", dubVoice: "AI Voice", likes: 2310, liked: false, videoUrl: demoUrls[2]
+        activeLang: "ORIG", isRealDub: false, likes: 2310, liked: false, videoUrl: demoUrls[2]
       }
     ];
 
     let myReels = [{ id: 101, title: "My First TransReel Upload", tags: "#TransReel #Creator", videoUrl: demoUrls[0] }];
-    let dubbedFolder = [{ id: 201, title: "Fire & Action Demo", lang: "Hindi 🇮🇳", voice: "Voice Cloning", videoUrl: demoUrls[0] }];
+    let dubbedFolder = [];
 
     let isMuted = false;
     let dualSubEnabled = true;
     let activeReelIndex = 0;
     let selectedPostUrl = null;
+    let currentCreateMode = "upload";
     let selectedStyle = "🎬 Cinematic";
+
     let selectedDubUrl = null;
+    let selectedDubFile = null;
     let selectedDubTitle = "Uploaded Video";
-    let selectedLang = "Hindi 🇮🇳";
-    let selectedVoice = "AI Voice";
+    let selectedLangLabel = "Hindi 🇮🇳";
+    let selectedLangCode = "hi";
+
     let currentMyTab = "reels";
     let activeCreatorHandle = null;
     let feedObserver = null;
@@ -656,6 +668,7 @@
     let singleTapTimer = null;
     let recognition = null;
     let isRecording = false;
+    let previewIndex = 0;
 
     function loginUser() {
       document.getElementById("authScreen").classList.add("hidden");
@@ -663,7 +676,7 @@
       updateSoundIcon();
       renderFeed();
       updateCounts();
-      showToast("✨ TransReel v3.5 Live! Tap + for AI Video");
+      showToast("🎙️ TransReel v4.0 — Real ElevenLabs Dub Live!");
     }
 
     function logoutUser() {
@@ -680,9 +693,7 @@
       renderFeed();
     }
 
-    function updateSoundIcon() {
-      document.getElementById("globalSoundBtn").textContent = isMuted ? "🔇" : "🔊";
-    }
+    function updateSoundIcon() { document.getElementById("globalSoundBtn").textContent = isMuted ? "🔇" : "🔊"; }
 
     function toggleGlobalSound() {
       isMuted = !isMuted;
@@ -690,37 +701,33 @@
       const videos = document.querySelectorAll(".reel-video");
       const r = reels[activeReelIndex];
       if (isMuted) {
-        stopSpeech();
-        videos.forEach(v => v.muted = true);
-        showToast("🔇 Muted");
+        stopSpeech(); videos.forEach(v => v.muted = true); showToast("🔇 Muted");
       } else {
-        if (r && r.activeLang !== "ORIG") {
-          videos.forEach(v => v.muted = true);
-          speakDub(r.activeLang, r.dubVoice);
+        if (r && !r.isRealDub && r.activeLang !== "ORIG") {
+          videos.forEach(v => v.muted = true); speakDub(r.activeLang);
         } else if (videos[activeReelIndex]) {
-          videos[activeReelIndex].muted = false;
-          videos[activeReelIndex].play().catch(() => {});
+          videos[activeReelIndex].muted = false; videos[activeReelIndex].play().catch(() => {});
         }
         showToast("🔊 Sound ON");
       }
     }
 
-    function stopSpeech() {
-      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
-    }
+    function stopSpeech() { if ("speechSynthesis" in window) window.speechSynthesis.cancel(); }
 
-    function speakDub(langKey, voiceStyle) {
+    function speakDub(langKey) {
       if (!("speechSynthesis" in window) || isMuted || langKey === "ORIG") return;
       stopSpeech();
       const info = dubScripts[langKey] || dubScripts["Hindi 🇮🇳"];
       const utter = new SpeechSynthesisUtterance(info.text);
       utter.lang = info.code;
-      if (voiceStyle === "Storytelling") { utter.rate = 0.88; utter.pitch = 0.9; }
-      else if (voiceStyle === "Voice Cloning") { utter.rate = 1.05; utter.pitch = 0.95; }
       window.speechSynthesis.speak(utter);
     }
 
     function switchReelLang(idx, langKey) {
+      if (reels[idx].isRealDub) {
+        showToast("Already playing Real ElevenLabs Dub!");
+        return;
+      }
       reels[idx].activeLang = langKey;
       const card = document.querySelectorAll(".reel-card")[idx];
       const video = card ? card.querySelector("video") : null;
@@ -731,8 +738,8 @@
       } else {
         isMuted = false; updateSoundIcon();
         if (video) { video.muted = true; video.play().catch(() => {}); }
-        speakDub(langKey, reels[idx].dubVoice);
-        showToast(`🎙️ Live AI Dub: ${langKey}`);
+        speakDub(langKey);
+        showToast(`🎙️ Quick Preview: ${langKey}`);
       }
       renderFeed();
       setTimeout(() => {
@@ -757,22 +764,27 @@
       container.innerHTML = reels.map((r, idx) => {
         const c = creators[r.creator] || creators["@azam_creator"];
         const transText = r.activeLang === "ORIG" ? dubScripts["Hindi 🇮🇳"].text : (dubScripts[r.activeLang]?.text || "");
+        const shouldMute = isMuted || (!r.isRealDub && r.activeLang !== "ORIG");
 
         return `
           <div class="reel-card" data-idx="${idx}">
-            <video class="reel-video" src="${r.videoUrl}" loop playsinline ${isMuted || r.activeLang !== "ORIG" ? "muted" : ""} onclick="handleScreenTap(event, this, ${idx})"></video>
+            <video class="reel-video" src="${r.videoUrl}" loop playsinline ${shouldMute ? "muted" : ""} onclick="handleScreenTap(event, this, ${idx})"></video>
             <div class="reel-overlay"></div>
             <div class="heart-burst" id="heart-${idx}">❤️</div>
 
-            <div class="live-lang-bar">
-              ${langKeys.map(k => `
-                <button class="lang-switch-btn ${r.activeLang === k ? 'active' : ''}" onclick="switchReelLang(${idx}, '${k}')">
-                  ${dubScripts[k].label}
-                </button>
-              `).join("")}
-            </div>
+            ${r.isRealDub ? `
+              <div class="real-dub-pill">✨ Real ElevenLabs AI Dub • ${r.activeLang}</div>
+            ` : `
+              <div class="live-lang-bar">
+                ${langKeys.map(k => `
+                  <button class="lang-switch-btn ${r.activeLang === k ? 'active' : ''}" onclick="switchReelLang(${idx}, '${k}')">
+                    ${dubScripts[k].label}
+                  </button>
+                `).join("")}
+              </div>
+            `}
 
-            ${dualSubEnabled ? `
+            ${dualSubEnabled && !r.isRealDub ? `
               <div class="dual-sub-box">
                 <div class="sub-orig">${r.origSub || "Original Audio"}</div>
                 <div class="sub-trans">${r.activeLang === "ORIG" ? "🇮🇳 " : "🎙️ "}${transText}</div>
@@ -790,7 +802,7 @@
               </button>
               <button class="action-btn dub-btn" onclick="openDubModalByIndex(${idx})">
                 <div class="action-icon">🌐</div>
-                <span class="action-label">Save Dub</span>
+                <span class="action-label">Real Dub</span>
               </button>
               <button class="action-btn" onclick="showToast('Link copied!')">
                 <div class="action-icon">↗️</div>
@@ -816,29 +828,24 @@
           </div>
         `;
       }).join("");
-
       setupFeedObserver();
     }
 
     function handleScreenTap(e, video, idx) {
       const now = Date.now();
       if (now - lastTapTime < 280) {
-        clearTimeout(singleTapTimer);
-        lastTapTime = 0;
-        triggerDoubleTapLike(idx);
+        clearTimeout(singleTapTimer); lastTapTime = 0; triggerDoubleTapLike(idx);
       } else {
         lastTapTime = now;
         singleTapTimer = setTimeout(() => {
           const r = reels[idx];
           if (video.paused) {
             video.play().catch(() => {});
-            if (r.activeLang !== "ORIG") speakDub(r.activeLang, r.dubVoice);
+            if (!r.isRealDub && r.activeLang !== "ORIG") speakDub(r.activeLang);
           } else {
-            if (r.activeLang === "ORIG" && video.muted && !isMuted) {
+            if ((r.isRealDub || r.activeLang === "ORIG") && video.muted && !isMuted) {
               video.muted = false; showToast("🔊 Sound ON");
-            } else {
-              video.pause(); stopSpeech();
-            }
+            } else { video.pause(); stopSpeech(); }
           }
         }, 280);
       }
@@ -864,10 +871,9 @@
           const reel = reels[idx];
           if (!video || !reel) return;
           if (entry.isIntersecting) {
-            activeReelIndex = idx;
-            video.currentTime = 0;
-            if (reel.activeLang !== "ORIG") {
-              video.muted = true; video.play().catch(() => {}); speakDub(reel.activeLang, reel.dubVoice);
+            activeReelIndex = idx; video.currentTime = 0;
+            if (!reel.isRealDub && reel.activeLang !== "ORIG") {
+              video.muted = true; video.play().catch(() => {}); speakDub(reel.activeLang);
             } else {
               stopSpeech(); video.muted = isMuted;
               video.play().catch(() => { video.muted = true; video.play().catch(() => {}); });
@@ -895,185 +901,234 @@
       }
     }
 
-    /* ================= CREATE POST: UPLOAD / TEXT-TO-VIDEO / VOICE-TO-VIDEO ================= */
-    function openCreateModal() { document.getElementById("createModal").classList.add("open"); }
+    /* ================= REAL ELEVENLABS AI DUBBING ================= */
+    function openDubModal() { openDubModalByIndex(activeReelIndex || 0); }
 
+    function openDubModalByIndex(idx) {
+      const r = reels[idx] || reels[0];
+      selectedDubUrl = r.videoUrl;
+      selectedDubFile = null;
+      selectedDubTitle = r.title;
+      document.getElementById("dubFileName").textContent = "🎬 Current Reel: " + r.title.slice(0, 26) + "...";
+      document.getElementById("dubStatusBox").classList.remove("show");
+      document.getElementById("dubModal").classList.add("open");
+    }
+
+    function handleDubFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.size > 3.2 * 1024 * 1024) {
+        showToast("⚠️ File 3MB se choti chunein (ya feed reel dub karein)");
+        return;
+      }
+      selectedDubFile = file;
+      selectedDubUrl = null;
+      selectedDubTitle = file.name.replace(/\.[^/.]+$/, "");
+      document.getElementById("dubFileName").textContent = "✅ " + file.name + ` (${(file.size/1024/1024).toFixed(1)} MB)`;
+    }
+
+    function selectChip(el, type) {
+      el.parentElement.querySelectorAll(".chip").forEach(c => c.classList.remove("selected"));
+      el.classList.add("selected");
+      if (type === "lang") {
+        selectedLangLabel = el.textContent;
+        selectedLangCode = el.dataset.code || "hi";
+      }
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(",")[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function startRealDubbing() {
+      const btn = document.getElementById("startDubBtn");
+      const statusBox = document.getElementById("dubStatusBox");
+      btn.disabled = true;
+      statusBox.classList.add("show");
+      statusBox.textContent = "⏳ Sending video to ElevenLabs AI...";
+      btn.textContent = "⏳ Uploading...";
+
+      try {
+        let payload = { targetLang: selectedLangCode };
+        if (selectedDubFile) {
+          payload.fileBase64 = await fileToBase64(selectedDubFile);
+          payload.fileName = selectedDubFile.name;
+          payload.mimeType = selectedDubFile.type || "video/mp4";
+        } else if (selectedDubUrl && selectedDubUrl.startsWith("http")) {
+          payload.sourceUrl = selectedDubUrl;
+        } else {
+          throw new Error("Koi public reel ya chota (<3MB) video file select karein.");
+        }
+
+        const startRes = await fetch("/api/dub", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const startData = await startRes.json();
+        if (!startRes.ok || !startData.dubbing_id) {
+          throw new Error(startData.detail?.message || startData.error || "Dubbing start nahi ho paya.");
+        }
+
+        const dubId = startData.dubbing_id;
+        statusBox.textContent = `🎙️ ElevenLabs AI dubbing shuru ho gayi hai (${selectedLangLabel})... 20–45 second wait karein.`;
+        btn.textContent = "⏳ AI Dubbing in Progress...";
+
+        // Poll status every 4 seconds
+        let attempts = 0;
+        let done = false;
+        while (attempts < 30 && !done) {
+          await new Promise(r => setTimeout(r, 4000));
+          attempts++;
+          const stRes = await fetch(`/api/dub?action=status&id=${dubId}`);
+          const stData = await stRes.json();
+
+          if (stData.status === "dubbed") {
+            done = true;
+            break;
+          } else if (stData.status === "failed") {
+            throw new Error(stData.error || "ElevenLabs dubbing failed.");
+          } else {
+            statusBox.textContent = `🎙️ AI Translating & Cloning Voice... (${attempts * 4}s)`;
+          }
+        }
+
+        if (!done) throw new Error("Dubbing mein zyada time lag raha hai, thodi der baad try karein.");
+
+        const realVideoUrl = `/api/dub?action=audio&id=${dubId}&lang=${selectedLangCode}`;
+        dubbedFolder.unshift({
+          id: Date.now(),
+          title: selectedDubTitle,
+          lang: selectedLangLabel,
+          isRealDub: true,
+          videoUrl: realVideoUrl
+        });
+
+        updateCounts();
+        statusBox.classList.remove("show");
+        btn.disabled = false;
+        btn.textContent = "🎙️ Start Real AI Dubbing";
+        closeModal("dubModal");
+        showToast(`🎉 Real AI Dub Ready (${selectedLangLabel})!`);
+        openMyProfile("dubbed");
+      } catch (err) {
+        statusBox.textContent = "❌ Error: " + err.message;
+        btn.disabled = false;
+        btn.textContent = "🎙️ Start Real AI Dubbing";
+      }
+    }
+
+    /* ================= CREATE POST + WATCH PREVIEW ================= */
+    function openCreateModal() {
+      document.querySelectorAll(".reel-video").forEach(v => v.pause());
+      stopSpeech();
+      document.getElementById("createModal").classList.add("open");
+    }
+    function closeCreateModal() {
+      const pVid = document.getElementById("aiPreviewVideo");
+      if (pVid) pVid.pause();
+      closeModal("createModal");
+    }
     function switchCreateTab(tab) {
+      currentCreateMode = tab;
       ["upload", "text", "voice"].forEach(t => {
         document.getElementById(`ctab-${t}`).classList.toggle("active", t === tab);
         document.getElementById(`pane-${t}`).classList.toggle("active", t === tab);
       });
     }
-
     function selectStyleChip(el) {
       el.parentElement.querySelectorAll(".chip").forEach(c => c.classList.remove("selected"));
       el.classList.add("selected");
       selectedStyle = el.textContent;
     }
-
     function handlePostFile(e) {
-      const file = e.target.files[0];
-      if (!file) return;
+      const file = e.target.files[0]; if (!file) return;
       selectedPostUrl = URL.createObjectURL(file);
       document.getElementById("postFileName").textContent = "✅ " + file.name;
-      showAIPreview(selectedPostUrl, "📤 Gallery Video Ready");
+      showAIPreview(selectedPostUrl, "📤 Gallery Video — Watch Preview");
     }
-
-    /* Real Mobile Mic Speech-to-Text for Voice-to-Video */
     function toggleVoiceRecording() {
       const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
       const micBtn = document.getElementById("voiceMicBtn");
       const status = document.getElementById("micStatus");
       const vPrompt = document.getElementById("v2vPrompt");
-
-      if (!SpeechRec) {
-        vPrompt.value = "A futuristic glowing dragon flying over mountains in 3D Pixar style";
-        showToast("Mic not supported here — sample prompt added!");
-        return;
-      }
-
-      if (isRecording && recognition) {
-        recognition.stop();
-        return;
-      }
-
-      recognition = new SpeechRec();
-      recognition.lang = "hi-IN";
-      recognition.interimResults = true;
-
-      recognition.onstart = () => {
-        isRecording = true;
-        micBtn.classList.add("recording");
-        status.textContent = "🔴 Listening... Speak now (Tap to stop)";
-      };
-      recognition.onresult = (event) => {
-        let transcript = "";
-        for (let i = 0; i < event.results.length; i++) {
-          transcript += event.results[i][0].transcript;
-        }
-        vPrompt.value = transcript;
-      };
-      recognition.onerror = () => {
-        isRecording = false;
-        micBtn.classList.remove("recording");
-        status.textContent = "Tap Mic & Speak Your Video Idea";
-        showToast("Mic permission needed or type below");
-      };
-      recognition.onend = () => {
-        isRecording = false;
-        micBtn.classList.remove("recording");
-        status.textContent = "✅ Voice captured! Tap Generate below";
-      };
-
+      if (!SpeechRec) { vPrompt.value = "A futuristic glowing dragon flying over mountains"; showToast("Sample prompt added!"); return; }
+      if (isRecording && recognition) { recognition.stop(); return; }
+      recognition = new SpeechRec(); recognition.lang = "hi-IN"; recognition.interimResults = true;
+      recognition.onstart = () => { isRecording = true; micBtn.classList.add("recording"); status.textContent = "🔴 Listening... Speak now"; };
+      recognition.onresult = (e) => { let t = ""; for (let i = 0; i < e.results.length; i++) t += e.results[i][0].transcript; vPrompt.value = t; };
+      recognition.onerror = () => { isRecording = false; micBtn.classList.remove("recording"); status.textContent = "Tap Mic & Speak"; };
+      recognition.onend = () => { isRecording = false; micBtn.classList.remove("recording"); status.textContent = "✅ Voice captured! Tap Generate"; };
       recognition.start();
     }
-
-    /* Text-to-Video & Voice-to-Video Generation Flow */
     function generateAIVideo(mode) {
       const promptEl = document.getElementById(mode === "text" ? "t2vPrompt" : "v2vPrompt");
       const btn = document.getElementById(mode === "text" ? "t2vGenBtn" : "v2vGenBtn");
       const promptText = promptEl.value.trim();
-
-      if (!promptText) {
-        showToast(mode === "text" ? "Pehle video prompt likhiye!" : "Pehle mic se boliye ya prompt likhiye!");
-        return;
-      }
-
-      const oldLabel = btn.textContent;
-      btn.disabled = true;
-      btn.textContent = "⏳ Rendering AI Video (0%)...";
-
-      setTimeout(() => { btn.textContent = "⏳ Generating Scenes (45%)..."; }, 450);
-      setTimeout(() => { btn.textContent = "⏳ Adding Audio & Polish (85%)..."; }, 950);
+      if (!promptText) { showToast("Pehle prompt likhiye ya boliye!"); return; }
+      const oldLabel = btn.textContent; btn.disabled = true; btn.textContent = "⏳ Rendering Preview...";
       setTimeout(() => {
-        const pickUrl = demoUrls[Math.floor(Math.random() * demoUrls.length)];
-        selectedPostUrl = pickUrl;
-        showAIPreview(pickUrl, mode === "text" ? `✨ Text-to-Video (${selectedStyle})` : "🎙️ Voice-to-Video Ready");
-
-        if (!document.getElementById("postTitle").value.trim()) {
-          document.getElementById("postTitle").value = promptText.slice(0, 60) + (promptText.length > 60 ? "..." : "");
-        }
-        if (!document.getElementById("postTags").value.trim()) {
-          document.getElementById("postTags").value = mode === "text" ? "#TextToVideo #TransReelAI #AIReels" : "#VoiceToVideo #TransReelAI #AICreator";
-        }
-
-        btn.disabled = false;
-        btn.textContent = oldLabel;
-        showToast("🎉 AI Video Ready! Tap Publish to Feed");
-      }, 1500);
+        previewIndex = (previewIndex + 1) % demoUrls.length;
+        selectedPostUrl = demoUrls[previewIndex];
+        showAIPreview(selectedPostUrl, mode === "text" ? `✨ Text-to-Video (${selectedStyle})` : "🎙️ Voice-to-Video Ready");
+        if (!document.getElementById("postTitle").value.trim()) document.getElementById("postTitle").value = promptText.slice(0, 60);
+        if (!document.getElementById("postTags").value.trim()) document.getElementById("postTags").value = "#TransReelAI #AIVideo";
+        btn.disabled = false; btn.textContent = oldLabel;
+      }, 900);
     }
-
     function showAIPreview(url, badgeText) {
       const box = document.getElementById("aiPreviewBox");
       const vid = document.getElementById("aiPreviewVideo");
       document.getElementById("aiPreviewBadge").textContent = badgeText;
-      vid.src = url;
-      box.classList.add("show");
+      vid.src = url; vid.load(); vid.muted = false; box.classList.add("show");
+      document.getElementById("watchToggleBtn").textContent = "▶️ Play with Sound";
+      setTimeout(() => box.scrollIntoView({ behavior: "smooth", block: "center" }), 120);
     }
-
+    function togglePreviewPlay() {
+      const vid = document.getElementById("aiPreviewVideo");
+      const btn = document.getElementById("watchToggleBtn");
+      if (vid.paused) { vid.muted = false; vid.play().catch(() => {}); btn.textContent = "⏸️ Pause Preview"; }
+      else { vid.pause(); btn.textContent = "▶️ Play with Sound"; }
+    }
+    function regeneratePreview() {
+      if (currentCreateMode === "text" || currentCreateMode === "voice") generateAIVideo(currentCreateMode);
+      else { previewIndex = (previewIndex + 1) % demoUrls.length; selectedPostUrl = demoUrls[previewIndex]; showAIPreview(selectedPostUrl, "🔄 New Preview Ready"); }
+    }
     function generateAIMetadata() {
       const btn = document.getElementById("aiGenBtn");
-      const titleInput = document.getElementById("postTitle");
-      const tagsInput = document.getElementById("postTags");
-      const presets = [
-        { title: "Created this entire reel using TransReel AI in 10 seconds 🤯🔥", tags: "#TransReelAI #TextToVideo #ViralReels" },
-        { title: "Just spoke my idea into the mic & AI built this video 🎙️✨", tags: "#VoiceToVideo #AICreator #TransReel" },
-        { title: "Future of short videos is here! Watch in any language 🌍⚡", tags: "#GlobalCreator #AIDubbing #TransReel" }
-      ];
-      const pick = presets[Math.floor(Math.random() * presets.length)];
-      btn.textContent = "✨ Generating...";
-      titleInput.value = ""; tagsInput.value = "";
-      let i = 0;
-      const t1 = setInterval(() => {
-        titleInput.value += pick.title[i++];
-        if (i >= pick.title.length) {
-          clearInterval(t1);
-          let j = 0;
-          const t2 = setInterval(() => {
-            tagsInput.value += pick.tags[j++];
-            if (j >= pick.tags.length) { clearInterval(t2); btn.textContent = "✨ Generate with AI"; }
-          }, 16);
-        }
-      }, 18);
+      document.getElementById("postTitle").value = "Created on TransReel AI Studio 🔥";
+      document.getElementById("postTags").value = "#TransReelAI #RealAIDub #ViralReels";
+      btn.textContent = "✨ Done!"; setTimeout(() => btn.textContent = "✨ Generate with AI", 1000);
     }
-
     function publishPost() {
-      const title = document.getElementById("postTitle").value.trim() || "New AI Generated TransReel";
+      if (!selectedPostUrl) { showToast("Pehle video upload ya generate kijiye!"); return; }
+      const pVid = document.getElementById("aiPreviewVideo"); if (pVid) pVid.pause();
+      const title = document.getElementById("postTitle").value.trim() || "New TransReel Video";
       const tags = document.getElementById("postTags").value.trim() || "#TransReel #AIVideo";
-      const videoUrl = selectedPostUrl || demoUrls[0];
       const newId = Date.now();
-
       reels.unshift({
         id: newId, creator: "@azam_creator", title, tags,
-        origSub: "Original: Created on TransReel AI Studio",
-        summary: "• Created with TransReel AI Studio.<br>• Supports 1-Tap Live Dubbing.",
-        activeLang: "ORIG", dubVoice: "AI Voice", likes: 1, liked: true, videoUrl
+        origSub: "Original: Created on TransReel", summary: "• Newly published creator video.",
+        activeLang: "ORIG", isRealDub: false, likes: 1, liked: true, videoUrl: selectedPostUrl
       });
-      myReels.unshift({ id: newId, title, tags, videoUrl });
-      updateCounts();
-      isMuted = false; updateSoundIcon();
-      renderFeed(); scrollToTopFeed();
-
-      // Reset modal
+      myReels.unshift({ id: newId, title, tags, videoUrl: selectedPostUrl });
+      updateCounts(); isMuted = false; updateSoundIcon(); renderFeed(); scrollToTopFeed();
       selectedPostUrl = null;
-      document.getElementById("postFileName").textContent = "Tap to select video from Gallery";
-      document.getElementById("t2vPrompt").value = "";
-      document.getElementById("v2vPrompt").value = "";
-      document.getElementById("postTitle").value = "";
-      document.getElementById("postTags").value = "";
       document.getElementById("aiPreviewBox").classList.remove("show");
-      closeModal("createModal");
-      showToast("🚀 Published to Feed!");
+      closeModal("createModal"); showToast("🚀 Published to Feed!");
     }
 
-    /* ================= CREATOR & MY PROFILE ================= */
+    /* ================= PROFILES ================= */
     function openCreatorProfile(handle) {
       if (handle === "@azam_creator") { openMyProfile("reels"); return; }
-      activeCreatorHandle = handle;
-      renderCreatorProfile(handle);
+      activeCreatorHandle = handle; renderCreatorProfile(handle);
       document.getElementById("creatorProfileModal").classList.add("open");
     }
-
     function renderCreatorProfile(handle) {
       const c = creators[handle] || creators["@neha_vlogs"];
       const creatorReels = reels.filter(r => r.creator === handle);
@@ -1094,47 +1149,13 @@
         </div>
       `).join("");
     }
-
     function toggleCreatorProfileFollow() { if (activeCreatorHandle) toggleFollowByHandle(activeCreatorHandle); }
-
     function playSpecificReel(reelId) {
       const idx = reels.findIndex(r => r.id === reelId);
       if (idx === -1) return;
       closeModal("creatorProfileModal"); closeModal("myProfileModal");
       const card = document.querySelectorAll(".reel-card")[idx];
       if (card) card.scrollIntoView({ behavior: "smooth" });
-    }
-
-    function openDubModal() { openDubModalByIndex(activeReelIndex || 0); }
-    function openDubModalByIndex(idx) {
-      const r = reels[idx] || reels[0];
-      selectedDubUrl = r.videoUrl; selectedDubTitle = r.title;
-      document.getElementById("dubFileName").textContent = "🎬 Selected: " + r.title.slice(0, 26) + "...";
-      document.getElementById("dubModal").classList.add("open");
-    }
-    function handleDubFile(e) {
-      const file = e.target.files[0]; if (!file) return;
-      selectedDubUrl = URL.createObjectURL(file);
-      selectedDubTitle = file.name.replace(/\.[^/.]+$/, "");
-      document.getElementById("dubFileName").textContent = "✅ " + file.name;
-    }
-    function selectChip(el, type) {
-      el.parentElement.querySelectorAll(".chip").forEach(c => c.classList.remove("selected"));
-      el.classList.add("selected");
-      if (type === "lang") selectedLang = el.textContent;
-      if (type === "voice") selectedVoice = el.textContent;
-    }
-    function startDubbing() {
-      const btn = document.getElementById("startDubBtn");
-      btn.textContent = "⏳ Generating AI Voice..."; btn.disabled = true;
-      setTimeout(() => {
-        dubbedFolder.unshift({ id: Date.now(), title: selectedDubTitle, lang: selectedLang, voice: selectedVoice, videoUrl: selectedDubUrl || demoUrls[0] });
-        updateCounts();
-        btn.textContent = "🎙️ Dub & Save to Dubbed Folder"; btn.disabled = false;
-        closeModal("dubModal");
-        showToast(`✅ Saved in Dubbed Folder (${selectedLang})`);
-        openMyProfile("dubbed");
-      }, 900);
     }
 
     function openMyProfile(tab = "reels") {
@@ -1163,22 +1184,20 @@
             <div class="grid-badge">${item.lang}</div>
             <div class="grid-title">${item.title}</div>
           </div>
-        `).join("") : `<div class="empty-state">No dubbed videos yet. Tap 🌐 Save Dub!</div>`;
+        `).join("") : `<div class="empty-state">No dubbed videos yet. Tap 🌐 Real Dub on any reel!</div>`;
       }
     }
     function playDubbedFromFolder(i) {
       const item = dubbedFolder[i]; if (!item) return;
-      isMuted = false; updateSoundIcon();
+      isMuted = false; updateSoundIcon(); stopSpeech();
       reels.unshift({
         id: Date.now(), creator: "@azam_creator",
-        title: item.title + " (AI Dubbed)", tags: "#DubbedFolder #TransReel",
-        origSub: "Original Audio (Muted for Dub)",
-        summary: `• Dubbed in ${item.lang} using ${item.voice}.`,
-        activeLang: item.lang, dubVoice: item.voice, likes: 1, liked: true, videoUrl: item.videoUrl
+        title: item.title + ` (Real ${item.lang} Dub)`, tags: "#RealAIDub #ElevenLabs #TransReel",
+        origSub: "", summary: `• Real ElevenLabs AI Dub in ${item.lang}.`,
+        activeLang: item.lang, isRealDub: true, likes: 1, liked: true, videoUrl: item.videoUrl
       });
       renderFeed(); closeModal("myProfileModal"); scrollToTopFeed();
-      speakDub(item.lang, item.voice);
-      showToast(`🔊 Playing AI Dub (${item.lang})`);
+      showToast(`🔊 Playing Real ElevenLabs Dub (${item.lang})`);
     }
 
     function updateCounts() {
@@ -1188,11 +1207,11 @@
     }
 
     function closeModal(id) { document.getElementById(id).classList.remove("open"); }
-    function closeModalOutside(e, id) { if (e.target.id === id) closeModal(id); }
+    function closeModalOutside(e, id) { if (e.target.id === id) { if (id === "createModal") closeCreateModal(); else closeModal(id); } }
     function showToast(msg) {
       const t = document.getElementById("toast");
       t.textContent = msg; t.classList.add("show");
-      setTimeout(() => t.classList.remove("show"), 2600);
+      setTimeout(() => t.classList.remove("show"), 2800);
     }
   </script>
 </body>
