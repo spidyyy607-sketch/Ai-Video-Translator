@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>TransReel v3.0 — AI Video Translator & Social Reels</title>
+  <title>TransReel v3.5 — AI Video Creator & Translator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
@@ -26,16 +26,9 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
-      background: var(--bg-base);
-      color: var(--text-main);
-      font-family: var(--font-body);
-      height: 100vh;
-      height: 100dvh;
-      width: 100vw;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      background: var(--bg-base); color: var(--text-main); font-family: var(--font-body);
+      height: 100vh; height: 100dvh; width: 100vw; overflow: hidden;
+      display: flex; justify-content: center; align-items: center;
     }
 
     .ambient-orb {
@@ -67,7 +60,7 @@
     }
     #authScreen.hidden { opacity: 0; pointer-events: none; transform: scale(1.04); }
     .version-badge {
-      padding: 4px 10px; border-radius: 999px; background: rgba(0, 229, 255, 0.15);
+      padding: 4px 11px; border-radius: 999px; background: rgba(0, 229, 255, 0.15);
       border: 1px solid var(--neon-cyan); color: var(--neon-cyan);
       font-size: 11px; font-weight: 800; margin-bottom: 14px; letter-spacing: 0.8px;
     }
@@ -78,7 +71,7 @@
       box-shadow: 0 0 30px rgba(0, 229, 255, 0.4); margin-bottom: 12px;
     }
     .brand-title { font-family: var(--font-display); font-size: 28px; font-weight: 700; margin-bottom: 6px; }
-    .brand-sub { font-size: 13px; color: var(--text-muted); text-align: center; max-width: 290px; margin-bottom: 22px; line-height: 1.45; }
+    .brand-sub { font-size: 13px; color: var(--text-muted); text-align: center; max-width: 295px; margin-bottom: 22px; line-height: 1.45; }
     .auth-card {
       width: 100%; background: var(--glass); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
       border: 1px solid var(--glass-border); border-radius: 24px; padding: 22px;
@@ -90,19 +83,21 @@
     }
     .divider { display: flex; align-items: center; gap: 10px; margin: 16px 0; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
     .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--glass-border); }
-    .input-group { margin-bottom: 14px; }
-    .input-group label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.6px; }
+    .input-group { margin-bottom: 12px; }
+    .input-group label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.6px; }
     .input-field {
-      width: 100%; padding: 13px 14px; border-radius: 13px; border: 1px solid var(--glass-border);
-      background: rgba(6, 9, 17, 0.72); color: #fff; font-size: 14px; font-family: inherit; outline: none;
+      width: 100%; padding: 12px 14px; border-radius: 13px; border: 1px solid var(--glass-border);
+      background: rgba(6, 9, 17, 0.72); color: #fff; font-size: 13.5px; font-family: inherit; outline: none;
     }
     .input-field:focus { border-color: var(--neon-cyan); }
+    textarea.input-field { resize: none; min-height: 76px; line-height: 1.4; }
     .btn-primary {
-      width: 100%; padding: 14px; border-radius: 14px; border: none; background: var(--accent-grad);
-      color: #fff; font-weight: 700; font-size: 15px; cursor: pointer;
+      width: 100%; padding: 13px; border-radius: 14px; border: none; background: var(--accent-grad);
+      color: #fff; font-weight: 700; font-size: 14.5px; cursor: pointer;
       box-shadow: 0 8px 24px rgba(138, 43, 226, 0.45); transition: transform 0.15s;
     }
     .btn-primary:active { transform: scale(0.98); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 
     /* ================= TOP HEADER ================= */
     .top-bar {
@@ -149,18 +144,11 @@
 
     /* Double-Tap Heart Animation */
     .heart-burst {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      font-size: 96px;
-      pointer-events: none;
-      z-index: 30;
-      filter: drop-shadow(0 0 24px rgba(255, 42, 109, 0.85));
-      opacity: 0;
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+      font-size: 96px; pointer-events: none; z-index: 30;
+      filter: drop-shadow(0 0 24px rgba(255, 42, 109, 0.85)); opacity: 0;
     }
-    .heart-burst.pop {
-      animation: heartPop 0.75s cubic-bezier(0.17, 0.89, 0.32, 1.28) forwards;
-    }
+    .heart-burst.pop { animation: heartPop 0.75s cubic-bezier(0.17, 0.89, 0.32, 1.28) forwards; }
     @keyframes heartPop {
       0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
       30% { transform: translate(-50%, -50%) scale(1.25); opacity: 1; }
@@ -168,7 +156,7 @@
       100% { transform: translate(-50%, -50%) scale(1.4); opacity: 0; }
     }
 
-    /* UNIQUE FEATURE 1: Live 1-Tap Language Switcher Bar */
+    /* Live 1-Tap Language Switcher */
     .live-lang-bar {
       position: absolute; top: 58px; left: 14px; right: 14px; z-index: 15;
       display: flex; align-items: center; gap: 6px; overflow-x: auto; scrollbar-width: none;
@@ -178,19 +166,14 @@
       padding: 5px 10px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.2);
       background: rgba(6, 9, 17, 0.65); backdrop-filter: blur(10px);
       color: #cbd5e1; font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap;
-      transition: all 0.2s;
     }
-    .lang-switch-btn.active {
-      background: var(--accent-grad); color: #fff; border-color: transparent;
-      box-shadow: 0 0 12px rgba(0, 229, 255, 0.45);
-    }
+    .lang-switch-btn.active { background: var(--accent-grad); color: #fff; border-color: transparent; box-shadow: 0 0 12px rgba(0, 229, 255, 0.45); }
 
-    /* UNIQUE FEATURE 2: Dual-Language Subtitles Box */
+    /* Dual Subtitles */
     .dual-sub-box {
       position: absolute; left: 14px; right: 72px; bottom: 205px; z-index: 12;
       background: rgba(6, 9, 17, 0.78); backdrop-filter: blur(10px);
-      border-left: 3px solid var(--neon-cyan); border-radius: 12px;
-      padding: 8px 12px; pointer-events: none;
+      border-left: 3px solid var(--neon-cyan); border-radius: 12px; padding: 8px 12px; pointer-events: none;
     }
     .sub-orig { font-size: 11.5px; color: #94a3b8; margin-bottom: 3px; }
     .sub-trans { font-size: 13px; color: #fff; font-weight: 600; line-height: 1.35; }
@@ -200,18 +183,12 @@
       position: absolute; right: 12px; bottom: 88px; z-index: 14;
       display: flex; flex-direction: column; align-items: center; gap: 13px;
     }
-    .action-btn {
-      display: flex; flex-direction: column; align-items: center; gap: 3px;
-      background: none; border: none; color: #fff; cursor: pointer;
-    }
+    .action-btn { display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: none; color: #fff; cursor: pointer; }
     .action-icon {
-      width: 42px; height: 42px; border-radius: 50%;
-      background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.16);
+      width: 42px; height: 42px; border-radius: 50%; background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.16);
       display: flex; align-items: center; justify-content: center; font-size: 18px;
-      transition: transform 0.15s;
     }
-    .action-btn:active .action-icon { transform: scale(0.9); }
     .action-btn.liked .action-icon { background: rgba(255, 42, 109, 0.35); border-color: var(--neon-pink); }
     .action-btn.dub-btn .action-icon { background: var(--accent-grad); border: none; box-shadow: 0 0 16px rgba(0, 229, 255, 0.45); }
     .action-btn.ai-sum-btn .action-icon { background: rgba(0, 229, 255, 0.18); border-color: var(--neon-cyan); }
@@ -241,10 +218,7 @@
       background: rgba(9, 13, 22, 0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
       border-top: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: space-around; padding-bottom: 6px;
     }
-    .nav-item {
-      display: flex; flex-direction: column; align-items: center; gap: 3px;
-      background: none; border: none; color: var(--text-muted); font-size: 10.5px; font-weight: 600; cursor: pointer;
-    }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: none; color: var(--text-muted); font-size: 10.5px; font-weight: 600; cursor: pointer; }
     .nav-item.active { color: #fff; }
     .nav-icon { font-size: 19px; }
     .nav-plus {
@@ -253,7 +227,7 @@
       box-shadow: 0 6px 20px rgba(255, 42, 109, 0.45); cursor: pointer; transform: translateY(-6px);
     }
 
-    /* ================= MODALS / DRAWERS ================= */
+    /* ================= MODALS ================= */
     .modal-backdrop {
       position: absolute; inset: 0; z-index: 40;
       background: rgba(4, 6, 12, 0.78); backdrop-filter: blur(8px);
@@ -261,26 +235,64 @@
     }
     .modal-backdrop.open { opacity: 1; pointer-events: auto; }
     .modal-sheet {
-      width: 100%; max-height: 90%; background: var(--bg-surface);
+      width: 100%; max-height: 92%; background: var(--bg-surface);
       border-top: 1px solid var(--glass-border); border-radius: 26px 26px 0 0;
-      padding: 18px 18px 28px; overflow-y: auto; transform: translateY(30px); transition: transform 0.22s ease;
+      padding: 16px 18px 26px; overflow-y: auto; transform: translateY(30px); transition: transform 0.22s ease;
     }
     .modal-backdrop.open .modal-sheet { transform: translateY(0); }
-    .sheet-handle { width: 42px; height: 4px; border-radius: 99px; background: rgba(255,255,255,0.22); margin: 0 auto 14px; }
-    .sheet-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .sheet-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; }
-    .close-btn {
-      width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--glass-border);
-      background: rgba(255,255,255,0.08); color: #fff; font-size: 15px; cursor: pointer;
+    .sheet-handle { width: 42px; height: 4px; border-radius: 99px; background: rgba(255,255,255,0.22); margin: 0 auto 12px; }
+    .sheet-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .sheet-title { font-family: var(--font-display); font-size: 17.5px; font-weight: 700; }
+    .close-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.08); color: #fff; font-size: 15px; cursor: pointer; }
+
+    /* Create Post 3-Tab Switcher */
+    .create-tabs {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+      background: rgba(6, 9, 17, 0.78); padding: 5px; border-radius: 14px; margin-bottom: 14px;
+    }
+    .create-tab-btn {
+      padding: 9px 4px; border-radius: 10px; border: none; background: transparent;
+      color: var(--text-muted); font-weight: 700; font-size: 11.5px; cursor: pointer; transition: all 0.2s;
+    }
+    .create-tab-btn.active { background: var(--accent-grad); color: #fff; box-shadow: 0 4px 12px rgba(138, 43, 226, 0.35); }
+    .create-pane { display: none; }
+    .create-pane.active { display: block; }
+
+    /* Voice-to-Video Mic UI */
+    .mic-box {
+      display: flex; flex-direction: column; align-items: center; padding: 16px;
+      border-radius: 18px; background: rgba(0, 229, 255, 0.05); border: 1px solid rgba(0, 229, 255, 0.25);
+      margin-bottom: 12px; text-align: center;
+    }
+    .mic-btn {
+      width: 68px; height: 68px; border-radius: 50%; border: none; background: var(--accent-grad);
+      color: #fff; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 24px rgba(0, 229, 255, 0.4); margin-bottom: 10px; transition: transform 0.15s;
+    }
+    .mic-btn.recording {
+      background: linear-gradient(135deg, #ff2a6d, #ff6b00);
+      animation: micPulse 1.1s infinite;
+    }
+    @keyframes micPulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 42, 109, 0.7); }
+      70% { box-shadow: 0 0 0 18px rgba(255, 42, 109, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 42, 109, 0); }
+    }
+    .ai-preview-box {
+      display: none; position: relative; border-radius: 16px; overflow: hidden;
+      border: 1px solid var(--neon-cyan); margin: 12px 0; background: #060911;
+    }
+    .ai-preview-box.show { display: block; }
+    .ai-preview-box video { width: 100%; height: 150px; object-fit: cover; display: block; }
+    .ai-preview-badge {
+      position: absolute; top: 8px; left: 8px; padding: 4px 10px; border-radius: 999px;
+      background: rgba(0, 229, 255, 0.92); color: #060911; font-size: 10.5px; font-weight: 800;
     }
 
-    /* Instagram-Style Profile */
+    /* Profile */
     .ig-header { display: flex; align-items: center; gap: 18px; margin-bottom: 14px; }
     .ig-avatar-ring { width: 72px; height: 72px; border-radius: 50%; padding: 3px; background: var(--accent-grad); flex-shrink: 0; }
-    .ig-avatar-inner {
-      width: 100%; height: 100%; border-radius: 50%; background: var(--bg-card);
-      display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; color: #fff;
-    }
+    .ig-avatar-inner { width: 100%; height: 100%; border-radius: 50%; background: var(--bg-card); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; color: #fff; }
     .ig-stats { flex: 1; display: flex; justify-content: space-around; text-align: center; }
     .ig-stat-num { font-size: 17px; font-weight: 800; color: #fff; }
     .ig-stat-lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
@@ -291,49 +303,26 @@
     .ig-btn-primary { padding: 10px; border-radius: 12px; border: none; background: var(--accent-grad); color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; }
     .ig-btn-secondary { padding: 10px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.07); color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; }
 
-    .tabs-row {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-      background: rgba(6, 9, 17, 0.7); padding: 5px; border-radius: 14px; margin-bottom: 14px;
-    }
+    .tabs-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: rgba(6, 9, 17, 0.7); padding: 5px; border-radius: 14px; margin-bottom: 14px; }
     .tab-btn { padding: 10px; border-radius: 10px; border: none; background: transparent; color: var(--text-muted); font-weight: 700; font-size: 13px; cursor: pointer; }
     .tab-btn.active { background: var(--accent-grad); color: #fff; }
 
     .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
     .video-grid.two-col { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .grid-card {
-      position: relative; aspect-ratio: 9 / 14; border-radius: 12px; overflow: hidden;
-      background: #060911; border: 1px solid var(--glass-border); cursor: pointer;
-    }
+    .grid-card { position: relative; aspect-ratio: 9 / 14; border-radius: 12px; overflow: hidden; background: #060911; border: 1px solid var(--glass-border); cursor: pointer; }
     .grid-card video { width: 100%; height: 100%; object-fit: cover; }
-    .grid-badge {
-      position: absolute; top: 6px; left: 6px; padding: 3px 7px; border-radius: 999px;
-      background: rgba(0, 229, 255, 0.92); color: #060911; font-size: 9.5px; font-weight: 800;
-    }
-    .grid-title {
-      position: absolute; bottom: 0; left: 0; right: 0; padding: 18px 6px 6px;
-      background: linear-gradient(transparent, rgba(0,0,0,0.92));
-      font-size: 10.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
+    .grid-badge { position: absolute; top: 6px; left: 6px; padding: 3px 7px; border-radius: 999px; background: rgba(0, 229, 255, 0.92); color: #060911; font-size: 9.5px; font-weight: 800; }
+    .grid-title { position: absolute; bottom: 0; left: 0; right: 0; padding: 18px 6px 6px; background: linear-gradient(transparent, rgba(0,0,0,0.92)); font-size: 10.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .empty-state { grid-column: 1 / -1; text-align: center; padding: 34px 16px; color: var(--text-muted); font-size: 13px; }
 
-    /* Upload & AI */
-    .upload-zone {
-      border: 1.5px dashed rgba(0, 229, 255, 0.45); border-radius: 16px; padding: 18px;
-      text-align: center; background: rgba(0, 229, 255, 0.05); margin-bottom: 16px; cursor: pointer; display: block;
-    }
+    .upload-zone { border: 1.5px dashed rgba(0, 229, 255, 0.45); border-radius: 16px; padding: 16px; text-align: center; background: rgba(0, 229, 255, 0.05); margin-bottom: 14px; cursor: pointer; display: block; }
     .ai-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-    .btn-ai { padding: 7px 12px; border-radius: 999px; border: none; background: linear-gradient(135deg, #00e5ff, #8a2be2); color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; }
-    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-    .chip { padding: 8px 13px; border-radius: 999px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: var(--text-main); font-size: 12px; font-weight: 600; cursor: pointer; }
+    .btn-ai { padding: 6px 12px; border-radius: 999px; border: none; background: linear-gradient(135deg, #00e5ff, #8a2be2); color: #fff; font-size: 11.5px; font-weight: 700; cursor: pointer; }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 12px; }
+    .chip { padding: 7px 11px; border-radius: 999px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: var(--text-main); font-size: 11.5px; font-weight: 600; cursor: pointer; }
     .chip.selected { background: rgba(0, 229, 255, 0.18); border-color: var(--neon-cyan); color: var(--neon-cyan); }
+    .summary-card { background: rgba(0, 229, 255, 0.08); border: 1px solid rgba(0, 229, 255, 0.35); border-radius: 16px; padding: 16px; font-size: 13.5px; line-height: 1.55; color: #e2e8f0; }
 
-    /* AI Summary Box */
-    .summary-card {
-      background: rgba(0, 229, 255, 0.08); border: 1px solid rgba(0, 229, 255, 0.35);
-      border-radius: 16px; padding: 16px; font-size: 13.5px; line-height: 1.55; color: #e2e8f0;
-    }
-
-    /* Toast */
     .toast {
       position: absolute; top: 102px; left: 50%; transform: translateX(-50%) translateY(-10px);
       z-index: 60; background: rgba(14, 20, 36, 0.96); border: 1px solid var(--neon-cyan);
@@ -352,10 +341,10 @@
 
     <!-- ================= LOGIN SCREEN ================= -->
     <div id="authScreen">
-      <div class="version-badge">TRANSREEL v3.0 • LIVE</div>
+      <div class="version-badge">TRANSREEL v3.5 • AI STUDIO</div>
       <div class="brand-logo">TR</div>
       <div class="brand-title">TransReel</div>
-      <div class="brand-sub">Double-tap to like, switch video languages live, and learn with dual subtitles.</div>
+      <div class="brand-sub">Create AI videos from Text or Voice, dub reels live, and connect globally.</div>
       <div class="auth-card">
         <button class="btn-google" onclick="loginUser()"><span>G</span> Continue with Google</button>
         <div class="divider">or sign in with email</div>
@@ -400,7 +389,7 @@
       </button>
     </div>
 
-    <!-- ================= AI SUMMARY MODAL (UNIQUE FEATURE) ================= -->
+    <!-- ================= AI SUMMARY MODAL ================= -->
     <div id="summaryModal" class="modal-backdrop" onclick="closeModalOutside(event, 'summaryModal')">
       <div class="modal-sheet">
         <div class="sheet-handle"></div>
@@ -412,34 +401,79 @@
       </div>
     </div>
 
-    <!-- ================= CREATE POST MODAL ================= -->
+    <!-- ================= CREATE POST MODAL (3 TABS) ================= -->
     <div id="createModal" class="modal-backdrop" onclick="closeModalOutside(event, 'createModal')">
       <div class="modal-sheet">
         <div class="sheet-handle"></div>
         <div class="sheet-header">
-          <div class="sheet-title">Create New Post</div>
+          <div class="sheet-title">Create AI Reel</div>
           <button class="close-btn" onclick="closeModal('createModal')">✕</button>
         </div>
 
-        <label class="upload-zone" for="postVideoInput">
-          <div style="font-size:26px; margin-bottom:6px;">🎬</div>
-          <div id="postFileName" style="font-size:13px; font-weight:600;">Tap to select video from Gallery</div>
-          <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Plays with original sound in Feed</div>
-          <input type="file" id="postVideoInput" accept="video/*" style="display:none;" onchange="handlePostFile(event)" />
-        </label>
+        <!-- 3-Tab Switcher -->
+        <div class="create-tabs">
+          <button id="ctab-upload" class="create-tab-btn active" onclick="switchCreateTab('upload')">📤 Upload</button>
+          <button id="ctab-text" class="create-tab-btn" onclick="switchCreateTab('text')">✨ Text to Video</button>
+          <button id="ctab-voice" class="create-tab-btn" onclick="switchCreateTab('voice')">🎙️ Voice to Video</button>
+        </div>
 
+        <!-- TAB 1: UPLOAD VIDEO -->
+        <div id="pane-upload" class="create-pane active">
+          <label class="upload-zone" for="postVideoInput">
+            <div style="font-size:24px; margin-bottom:4px;">🎬</div>
+            <div id="postFileName" style="font-size:13px; font-weight:600;">Tap to select video from Gallery</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:3px;">MP4, MOV, WebM supported</div>
+            <input type="file" id="postVideoInput" accept="video/*" style="display:none;" onchange="handlePostFile(event)" />
+          </label>
+        </div>
+
+        <!-- TAB 2: TEXT TO VIDEO -->
+        <div id="pane-text" class="create-pane">
+          <div class="input-group">
+            <label>Describe Your Video Idea</label>
+            <textarea id="t2vPrompt" class="input-field" placeholder="e.g., A futuristic neon car racing through Surat streets in 3D Pixar style..."></textarea>
+          </div>
+          <div style="font-size:11px; color:var(--text-muted); font-weight:700; margin-bottom:6px;">VIDEO STYLE</div>
+          <div class="chip-row" id="t2vStyles">
+            <button class="chip selected" onclick="selectStyleChip(this)">🎬 Cinematic</button>
+            <button class="chip" onclick="selectStyleChip(this)">🐉 3D Pixar</button>
+            <button class="chip" onclick="selectStyleChip(this)">⚡ Cyberpunk</button>
+            <button class="chip" onclick="selectStyleChip(this)">🎨 Anime</button>
+          </div>
+          <button class="btn-primary" id="t2vGenBtn" onclick="generateAIVideo('text')" style="margin-bottom:12px;">✨ Generate AI Video</button>
+        </div>
+
+        <!-- TAB 3: VOICE TO VIDEO -->
+        <div id="pane-voice" class="create-pane">
+          <div class="mic-box">
+            <button id="voiceMicBtn" class="mic-btn" onclick="toggleVoiceRecording()">🎙️</button>
+            <div id="micStatus" style="font-size:12.5px; font-weight:700; color:var(--neon-cyan);">Tap Mic & Speak Your Video Idea</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:3px;">Hindi or English supported</div>
+          </div>
+          <div class="input-group">
+            <label>Voice Prompt (Editable)</label>
+            <textarea id="v2vPrompt" class="input-field" placeholder="Your spoken words will appear here..."></textarea>
+          </div>
+          <button class="btn-primary" id="v2vGenBtn" onclick="generateAIVideo('voice')" style="margin-bottom:12px;">🎬 Turn Voice into AI Video</button>
+        </div>
+
+        <!-- Generated AI Video Preview -->
+        <div id="aiPreviewBox" class="ai-preview-box">
+          <video id="aiPreviewVideo" autoplay loop muted playsinline></video>
+          <div class="ai-preview-badge" id="aiPreviewBadge">✨ AI Generated Preview</div>
+        </div>
+
+        <!-- Common Title, Hashtags & Publish -->
         <div class="ai-row">
-          <label style="font-size:12px; color:var(--text-muted); font-weight:600;">VIDEO DETAILS (EDITABLE)</label>
+          <label style="font-size:11.5px; color:var(--text-muted); font-weight:700;">TITLE & HASHTAGS</label>
           <button class="btn-ai" id="aiGenBtn" onclick="generateAIMetadata()">✨ Generate with AI</button>
         </div>
 
         <div class="input-group">
-          <label>Title</label>
           <input type="text" id="postTitle" class="input-field" placeholder="Write a catchy title or use AI..." />
         </div>
         <div class="input-group">
-          <label>Hashtags</label>
-          <input type="text" id="postTags" class="input-field" placeholder="#TransReel #AI #Viral" />
+          <input type="text" id="postTags" class="input-field" placeholder="#TransReel #AIVideo #Viral" />
         </div>
 
         <button class="btn-primary" onclick="publishPost()">🚀 Publish to Feed</button>
@@ -501,7 +535,7 @@
 
         <div class="ig-bio">
           <div class="ig-fullname">Mohammad Azam</div>
-          <div class="ig-bio-text">🎬 TransReel Creator | AI Video Dubbing & Global Reels<br>📍 Surat, India</div>
+          <div class="ig-bio-text">🎬 TransReel Creator | AI Video Dubbing & Text-to-Video<br>📍 Surat, India</div>
         </div>
 
         <div class="ig-btn-row">
@@ -573,16 +607,16 @@
       "@neha_vlogs": { name: "Neha Sharma", initials: "NS", bio: "✈️ Travel & Tech Vlogger | Translating my reels into 10+ languages 🌍", followers: "48.2K", following: "312", followingMe: false },
       "@tech_arjun": { name: "Arjun Verma", initials: "AV", bio: "🤖 AI & Future Tech | Daily 60-sec gadgets & AI dubbing demos ⚡", followers: "112K", following: "184", followingMe: false },
       "@rohit_cinema": { name: "Rohit Kapoor", initials: "RK", bio: "🎥 Cinematography & Short Films | Watch in Hindi, English & Spanish 🎬", followers: "29.5K", following: "410", followingMe: false },
-      "@azam_creator": { name: "Mohammad Azam", initials: "AZ", bio: "🎬 TransReel Creator | AI Video Dubbing & Global Reels 📍 Surat, India", followers: "12.4K", following: "98", followingMe: true }
+      "@azam_creator": { name: "Mohammad Azam", initials: "AZ", bio: "🎬 TransReel Creator | AI Video Dubbing & Text-to-Video 📍 Surat, India", followers: "12.4K", following: "98", followingMe: true }
     };
 
     let reels = [
       {
         id: 1, creator: "@neha_vlogs",
-        title: "Double-tap screen to Like ❤️ | Tap HI 🇮🇳 above for Live Dub!",
-        tags: "#TransReel #LiveDub #DoubleTap",
-        origSub: "Original (EN): Experience fire and action in crystal clarity.",
-        summary: "• Shows a high-energy action demo clip.<br>• Demonstrates 1-Tap Live Language Switching & Dual Subtitles.",
+        title: "Tap + to try Text-to-Video & Voice-to-Video ✨ | Double-tap to Like ❤️",
+        tags: "#TransReel #TextToVideo #VoiceToVideo",
+        origSub: "Original (EN): Create AI videos or dub any reel in one tap.",
+        summary: "• High-energy demo clip.<br>• Try the new '+' button for Text-to-Video & Voice-to-Video.",
         activeLang: "ORIG", dubVoice: "AI Voice", likes: 1240, liked: false, videoUrl: demoUrls[0]
       },
       {
@@ -590,7 +624,7 @@
         title: "Great Escape — Try 📖 Dual Subtitles to learn Spanish or Hindi!",
         tags: "#AI #LearnLanguages #GlobalReels",
         origSub: "Original (EN): Breaking language barriers with instant AI voice.",
-        summary: "• Highlights how creators reach global audiences.<br>• Use Dual Subtitles to read Original + Translated text together.",
+        summary: "• Highlights global content creation.<br>• Read Original + Translated subtitles together.",
         activeLang: "ORIG", dubVoice: "AI Voice", likes: 892, liked: false, videoUrl: demoUrls[1]
       },
       {
@@ -598,16 +632,8 @@
         title: "Tap @rohit_cinema DP to open Instagram-style Profile 🎬",
         tags: "#Cinema #TransReel #Viral",
         origSub: "Original (EN): Cinematic storytelling for everyone, everywhere.",
-        summary: "• Short cinematic fun reel.<br>• Tap the creator's profile picture to view their full grid & bio.",
+        summary: "• Short cinematic fun reel.<br>• Tap creator DP for full profile grid.",
         activeLang: "ORIG", dubVoice: "AI Voice", likes: 2310, liked: false, videoUrl: demoUrls[2]
-      },
-      {
-        id: 4, creator: "@neha_vlogs",
-        title: "Joyride Highway — Smooth 60fps Reels Feed 🚗⚡",
-        tags: "#Travel #Joyride #TransReel",
-        origSub: "Original (EN): Smooth highway drive captured in HD.",
-        summary: "• Smooth highway driving visuals.<br>• Ready to be dubbed into Hindi, Urdu, Spanish, or Arabic.",
-        activeLang: "ORIG", dubVoice: "AI Voice", likes: 1580, liked: false, videoUrl: demoUrls[3]
       }
     ];
 
@@ -618,6 +644,7 @@
     let dualSubEnabled = true;
     let activeReelIndex = 0;
     let selectedPostUrl = null;
+    let selectedStyle = "🎬 Cinematic";
     let selectedDubUrl = null;
     let selectedDubTitle = "Uploaded Video";
     let selectedLang = "Hindi 🇮🇳";
@@ -627,6 +654,8 @@
     let feedObserver = null;
     let lastTapTime = 0;
     let singleTapTimer = null;
+    let recognition = null;
+    let isRecording = false;
 
     function loginUser() {
       document.getElementById("authScreen").classList.add("hidden");
@@ -634,7 +663,7 @@
       updateSoundIcon();
       renderFeed();
       updateCounts();
-      showToast("✨ TransReel v3.0 Ready! Double-tap to Like ❤️");
+      showToast("✨ TransReel v3.5 Live! Tap + for AI Video");
     }
 
     function logoutUser() {
@@ -691,19 +720,16 @@
       window.speechSynthesis.speak(utter);
     }
 
-    /* UNIQUE FEATURE 1: Live 1-Tap Language Switcher */
     function switchReelLang(idx, langKey) {
       reels[idx].activeLang = langKey;
       const card = document.querySelectorAll(".reel-card")[idx];
       const video = card ? card.querySelector("video") : null;
-
       if (langKey === "ORIG") {
         stopSpeech();
         if (video) { video.muted = isMuted; video.play().catch(() => {}); }
-        showToast("🔊 Switched to Original Audio");
+        showToast("🔊 Original Audio");
       } else {
-        isMuted = false;
-        updateSoundIcon();
+        isMuted = false; updateSoundIcon();
         if (video) { video.muted = true; video.play().catch(() => {}); }
         speakDub(langKey, reels[idx].dubVoice);
         showToast(`🎙️ Live AI Dub: ${langKey}`);
@@ -715,12 +741,11 @@
       }, 10);
     }
 
-    /* UNIQUE FEATURE 3: AI 2-Sec Summary */
     function openAISummary(idx) {
       const r = reels[idx];
       document.getElementById("summaryContent").innerHTML = `
         <div style="font-weight:700; color:var(--neon-cyan); margin-bottom:8px;">${r.title}</div>
-        <div>${r.summary || "• AI-analyzed short video.<br>• Supports instant live dubbing & dual subtitles."}</div>
+        <div>${r.summary || "• AI-generated / creator short video."}</div>
       `;
       document.getElementById("summaryModal").classList.add("open");
     }
@@ -731,9 +756,7 @@
 
       container.innerHTML = reels.map((r, idx) => {
         const c = creators[r.creator] || creators["@azam_creator"];
-        const transText = r.activeLang === "ORIG"
-          ? dubScripts["Hindi 🇮🇳"].text
-          : (dubScripts[r.activeLang]?.text || "");
+        const transText = r.activeLang === "ORIG" ? dubScripts["Hindi 🇮🇳"].text : (dubScripts[r.activeLang]?.text || "");
 
         return `
           <div class="reel-card" data-idx="${idx}">
@@ -741,7 +764,6 @@
             <div class="reel-overlay"></div>
             <div class="heart-burst" id="heart-${idx}">❤️</div>
 
-            <!-- Live 1-Tap Language Switcher -->
             <div class="live-lang-bar">
               ${langKeys.map(k => `
                 <button class="lang-switch-btn ${r.activeLang === k ? 'active' : ''}" onclick="switchReelLang(${idx}, '${k}')">
@@ -750,7 +772,6 @@
               `).join("")}
             </div>
 
-            <!-- Dual Subtitles -->
             ${dualSubEnabled ? `
               <div class="dual-sub-box">
                 <div class="sub-orig">${r.origSub || "Original Audio"}</div>
@@ -799,11 +820,9 @@
       setupFeedObserver();
     }
 
-    /* Instagram-Style Double-Tap to Like + Single-Tap Pause/Play */
     function handleScreenTap(e, video, idx) {
       const now = Date.now();
       if (now - lastTapTime < 280) {
-        // Double Tap!
         clearTimeout(singleTapTimer);
         lastTapTime = 0;
         triggerDoubleTapLike(idx);
@@ -816,11 +835,9 @@
             if (r.activeLang !== "ORIG") speakDub(r.activeLang, r.dubVoice);
           } else {
             if (r.activeLang === "ORIG" && video.muted && !isMuted) {
-              video.muted = false;
-              showToast("🔊 Sound ON");
+              video.muted = false; showToast("🔊 Sound ON");
             } else {
-              video.pause();
-              stopSpeech();
+              video.pause(); stopSpeech();
             }
           }
         }, 280);
@@ -829,19 +846,11 @@
 
     function triggerDoubleTapLike(idx) {
       const heart = document.getElementById(`heart-${idx}`);
-      if (heart) {
-        heart.classList.remove("pop");
-        void heart.offsetWidth;
-        heart.classList.add("pop");
-      }
+      if (heart) { heart.classList.remove("pop"); void heart.offsetWidth; heart.classList.add("pop"); }
       if (!reels[idx].liked) {
-        reels[idx].liked = true;
-        reels[idx].likes += 1;
-        const countEl = document.getElementById(`like-count-${idx}`);
-        if (countEl) {
-          countEl.textContent = reels[idx].likes;
-          countEl.parentElement.classList.add("liked");
-        }
+        reels[idx].liked = true; reels[idx].likes += 1;
+        const el = document.getElementById(`like-count-${idx}`);
+        if (el) { el.textContent = reels[idx].likes; el.parentElement.classList.add("liked"); }
       }
     }
 
@@ -854,39 +863,28 @@
           const video = entry.target.querySelector("video");
           const reel = reels[idx];
           if (!video || !reel) return;
-
           if (entry.isIntersecting) {
             activeReelIndex = idx;
             video.currentTime = 0;
             if (reel.activeLang !== "ORIG") {
-              video.muted = true;
-              video.play().catch(() => {});
-              speakDub(reel.activeLang, reel.dubVoice);
+              video.muted = true; video.play().catch(() => {}); speakDub(reel.activeLang, reel.dubVoice);
             } else {
-              stopSpeech();
-              video.muted = isMuted;
+              stopSpeech(); video.muted = isMuted;
               video.play().catch(() => { video.muted = true; video.play().catch(() => {}); });
             }
-          } else {
-            video.pause();
-          }
+          } else { video.pause(); }
         });
       }, { threshold: 0.65 });
       cards.forEach(c => feedObserver.observe(c));
     }
 
-    function scrollToTopFeed() {
-      document.getElementById("feedContainer").scrollTo({ top: 0, behavior: "smooth" });
-    }
+    function scrollToTopFeed() { document.getElementById("feedContainer").scrollTo({ top: 0, behavior: "smooth" }); }
 
     function toggleLike(idx) {
       reels[idx].liked = !reels[idx].liked;
       reels[idx].likes += reels[idx].liked ? 1 : -1;
-      const countEl = document.getElementById(`like-count-${idx}`);
-      if (countEl) {
-        countEl.textContent = reels[idx].likes;
-        countEl.parentElement.classList.toggle("liked", reels[idx].liked);
-      }
+      const el = document.getElementById(`like-count-${idx}`);
+      if (el) { el.textContent = reels[idx].likes; el.parentElement.classList.toggle("liked", reels[idx].liked); }
     }
 
     function toggleFollowByHandle(handle) {
@@ -897,7 +895,178 @@
       }
     }
 
-    /* ================= CREATOR PROFILE ================= */
+    /* ================= CREATE POST: UPLOAD / TEXT-TO-VIDEO / VOICE-TO-VIDEO ================= */
+    function openCreateModal() { document.getElementById("createModal").classList.add("open"); }
+
+    function switchCreateTab(tab) {
+      ["upload", "text", "voice"].forEach(t => {
+        document.getElementById(`ctab-${t}`).classList.toggle("active", t === tab);
+        document.getElementById(`pane-${t}`).classList.toggle("active", t === tab);
+      });
+    }
+
+    function selectStyleChip(el) {
+      el.parentElement.querySelectorAll(".chip").forEach(c => c.classList.remove("selected"));
+      el.classList.add("selected");
+      selectedStyle = el.textContent;
+    }
+
+    function handlePostFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      selectedPostUrl = URL.createObjectURL(file);
+      document.getElementById("postFileName").textContent = "✅ " + file.name;
+      showAIPreview(selectedPostUrl, "📤 Gallery Video Ready");
+    }
+
+    /* Real Mobile Mic Speech-to-Text for Voice-to-Video */
+    function toggleVoiceRecording() {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const micBtn = document.getElementById("voiceMicBtn");
+      const status = document.getElementById("micStatus");
+      const vPrompt = document.getElementById("v2vPrompt");
+
+      if (!SpeechRec) {
+        vPrompt.value = "A futuristic glowing dragon flying over mountains in 3D Pixar style";
+        showToast("Mic not supported here — sample prompt added!");
+        return;
+      }
+
+      if (isRecording && recognition) {
+        recognition.stop();
+        return;
+      }
+
+      recognition = new SpeechRec();
+      recognition.lang = "hi-IN";
+      recognition.interimResults = true;
+
+      recognition.onstart = () => {
+        isRecording = true;
+        micBtn.classList.add("recording");
+        status.textContent = "🔴 Listening... Speak now (Tap to stop)";
+      };
+      recognition.onresult = (event) => {
+        let transcript = "";
+        for (let i = 0; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        vPrompt.value = transcript;
+      };
+      recognition.onerror = () => {
+        isRecording = false;
+        micBtn.classList.remove("recording");
+        status.textContent = "Tap Mic & Speak Your Video Idea";
+        showToast("Mic permission needed or type below");
+      };
+      recognition.onend = () => {
+        isRecording = false;
+        micBtn.classList.remove("recording");
+        status.textContent = "✅ Voice captured! Tap Generate below";
+      };
+
+      recognition.start();
+    }
+
+    /* Text-to-Video & Voice-to-Video Generation Flow */
+    function generateAIVideo(mode) {
+      const promptEl = document.getElementById(mode === "text" ? "t2vPrompt" : "v2vPrompt");
+      const btn = document.getElementById(mode === "text" ? "t2vGenBtn" : "v2vGenBtn");
+      const promptText = promptEl.value.trim();
+
+      if (!promptText) {
+        showToast(mode === "text" ? "Pehle video prompt likhiye!" : "Pehle mic se boliye ya prompt likhiye!");
+        return;
+      }
+
+      const oldLabel = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "⏳ Rendering AI Video (0%)...";
+
+      setTimeout(() => { btn.textContent = "⏳ Generating Scenes (45%)..."; }, 450);
+      setTimeout(() => { btn.textContent = "⏳ Adding Audio & Polish (85%)..."; }, 950);
+      setTimeout(() => {
+        const pickUrl = demoUrls[Math.floor(Math.random() * demoUrls.length)];
+        selectedPostUrl = pickUrl;
+        showAIPreview(pickUrl, mode === "text" ? `✨ Text-to-Video (${selectedStyle})` : "🎙️ Voice-to-Video Ready");
+
+        if (!document.getElementById("postTitle").value.trim()) {
+          document.getElementById("postTitle").value = promptText.slice(0, 60) + (promptText.length > 60 ? "..." : "");
+        }
+        if (!document.getElementById("postTags").value.trim()) {
+          document.getElementById("postTags").value = mode === "text" ? "#TextToVideo #TransReelAI #AIReels" : "#VoiceToVideo #TransReelAI #AICreator";
+        }
+
+        btn.disabled = false;
+        btn.textContent = oldLabel;
+        showToast("🎉 AI Video Ready! Tap Publish to Feed");
+      }, 1500);
+    }
+
+    function showAIPreview(url, badgeText) {
+      const box = document.getElementById("aiPreviewBox");
+      const vid = document.getElementById("aiPreviewVideo");
+      document.getElementById("aiPreviewBadge").textContent = badgeText;
+      vid.src = url;
+      box.classList.add("show");
+    }
+
+    function generateAIMetadata() {
+      const btn = document.getElementById("aiGenBtn");
+      const titleInput = document.getElementById("postTitle");
+      const tagsInput = document.getElementById("postTags");
+      const presets = [
+        { title: "Created this entire reel using TransReel AI in 10 seconds 🤯🔥", tags: "#TransReelAI #TextToVideo #ViralReels" },
+        { title: "Just spoke my idea into the mic & AI built this video 🎙️✨", tags: "#VoiceToVideo #AICreator #TransReel" },
+        { title: "Future of short videos is here! Watch in any language 🌍⚡", tags: "#GlobalCreator #AIDubbing #TransReel" }
+      ];
+      const pick = presets[Math.floor(Math.random() * presets.length)];
+      btn.textContent = "✨ Generating...";
+      titleInput.value = ""; tagsInput.value = "";
+      let i = 0;
+      const t1 = setInterval(() => {
+        titleInput.value += pick.title[i++];
+        if (i >= pick.title.length) {
+          clearInterval(t1);
+          let j = 0;
+          const t2 = setInterval(() => {
+            tagsInput.value += pick.tags[j++];
+            if (j >= pick.tags.length) { clearInterval(t2); btn.textContent = "✨ Generate with AI"; }
+          }, 16);
+        }
+      }, 18);
+    }
+
+    function publishPost() {
+      const title = document.getElementById("postTitle").value.trim() || "New AI Generated TransReel";
+      const tags = document.getElementById("postTags").value.trim() || "#TransReel #AIVideo";
+      const videoUrl = selectedPostUrl || demoUrls[0];
+      const newId = Date.now();
+
+      reels.unshift({
+        id: newId, creator: "@azam_creator", title, tags,
+        origSub: "Original: Created on TransReel AI Studio",
+        summary: "• Created with TransReel AI Studio.<br>• Supports 1-Tap Live Dubbing.",
+        activeLang: "ORIG", dubVoice: "AI Voice", likes: 1, liked: true, videoUrl
+      });
+      myReels.unshift({ id: newId, title, tags, videoUrl });
+      updateCounts();
+      isMuted = false; updateSoundIcon();
+      renderFeed(); scrollToTopFeed();
+
+      // Reset modal
+      selectedPostUrl = null;
+      document.getElementById("postFileName").textContent = "Tap to select video from Gallery";
+      document.getElementById("t2vPrompt").value = "";
+      document.getElementById("v2vPrompt").value = "";
+      document.getElementById("postTitle").value = "";
+      document.getElementById("postTags").value = "";
+      document.getElementById("aiPreviewBox").classList.remove("show");
+      closeModal("createModal");
+      showToast("🚀 Published to Feed!");
+    }
+
+    /* ================= CREATOR & MY PROFILE ================= */
     function openCreatorProfile(handle) {
       if (handle === "@azam_creator") { openMyProfile("reels"); return; }
       activeCreatorHandle = handle;
@@ -915,11 +1084,9 @@
       document.getElementById("cpPosts").textContent = creatorReels.length;
       document.getElementById("cpFollowers").textContent = c.followers;
       document.getElementById("cpFollowing").textContent = c.following;
-
       const fBtn = document.getElementById("cpFollowBtn");
       fBtn.textContent = c.followingMe ? "Following ✓" : "Follow";
       fBtn.className = c.followingMe ? "ig-btn-secondary" : "ig-btn-primary";
-
       document.getElementById("cpGrid").innerHTML = creatorReels.map(r => `
         <div class="grid-card" onclick="playSpecificReel(${r.id})">
           <video src="${r.videoUrl}" muted playsinline></video>
@@ -928,106 +1095,35 @@
       `).join("");
     }
 
-    function toggleCreatorProfileFollow() {
-      if (activeCreatorHandle) toggleFollowByHandle(activeCreatorHandle);
-    }
+    function toggleCreatorProfileFollow() { if (activeCreatorHandle) toggleFollowByHandle(activeCreatorHandle); }
 
     function playSpecificReel(reelId) {
       const idx = reels.findIndex(r => r.id === reelId);
       if (idx === -1) return;
-      closeModal("creatorProfileModal");
-      closeModal("myProfileModal");
+      closeModal("creatorProfileModal"); closeModal("myProfileModal");
       const card = document.querySelectorAll(".reel-card")[idx];
       if (card) card.scrollIntoView({ behavior: "smooth" });
     }
 
-    /* ================= CREATE POST + AI GENERATOR ================= */
-    function openCreateModal() { document.getElementById("createModal").classList.add("open"); }
-
-    function handlePostFile(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      selectedPostUrl = URL.createObjectURL(file);
-      document.getElementById("postFileName").textContent = "✅ " + file.name;
-    }
-
-    function generateAIMetadata() {
-      const btn = document.getElementById("aiGenBtn");
-      const titleInput = document.getElementById("postTitle");
-      const tagsInput = document.getElementById("postTags");
-      const presets = [
-        { title: "Watch till the end! AI dubbed this in 10 seconds 🤯🔥", tags: "#TransReel #AIDubbing #ViralReels" },
-        { title: "Breaking language barriers with one tap 🌍✨", tags: "#GlobalCreator #VoiceCloning #TransReel" },
-        { title: "You won't believe this voice is AI generated 🎙️⚡", tags: "#AIVoice #TechReels #TransReel" }
-      ];
-      const pick = presets[Math.floor(Math.random() * presets.length)];
-      btn.textContent = "✨ Generating...";
-      titleInput.value = ""; tagsInput.value = "";
-      let i = 0;
-      const t1 = setInterval(() => {
-        titleInput.value += pick.title[i++];
-        if (i >= pick.title.length) {
-          clearInterval(t1);
-          let j = 0;
-          const t2 = setInterval(() => {
-            tagsInput.value += pick.tags[j++];
-            if (j >= pick.tags.length) { clearInterval(t2); btn.textContent = "✨ Generate with AI"; }
-          }, 16);
-        }
-      }, 20);
-    }
-
-    function publishPost() {
-      const title = document.getElementById("postTitle").value.trim() || "New TransReel Video";
-      const tags = document.getElementById("postTags").value.trim() || "#TransReel #AI";
-      const videoUrl = selectedPostUrl || demoUrls[0];
-      const newId = Date.now();
-
-      reels.unshift({
-        id: newId, creator: "@azam_creator", title, tags,
-        origSub: "Original: Uploaded from Gallery",
-        summary: "• Newly uploaded creator video.<br>• Supports 1-Tap Live Dubbing.",
-        activeLang: "ORIG", dubVoice: "AI Voice", likes: 1, liked: true, videoUrl
-      });
-      myReels.unshift({ id: newId, title, tags, videoUrl });
-      updateCounts();
-      isMuted = false; updateSoundIcon();
-      renderFeed(); scrollToTopFeed();
-
-      selectedPostUrl = null;
-      document.getElementById("postFileName").textContent = "Tap to select video from Gallery";
-      document.getElementById("postTitle").value = "";
-      document.getElementById("postTags").value = "";
-      closeModal("createModal");
-      showToast("🚀 Published with Sound!");
-    }
-
-    /* ================= AI DUBBING & DUBBED FOLDER ================= */
     function openDubModal() { openDubModalByIndex(activeReelIndex || 0); }
-
     function openDubModalByIndex(idx) {
       const r = reels[idx] || reels[0];
-      selectedDubUrl = r.videoUrl;
-      selectedDubTitle = r.title;
+      selectedDubUrl = r.videoUrl; selectedDubTitle = r.title;
       document.getElementById("dubFileName").textContent = "🎬 Selected: " + r.title.slice(0, 26) + "...";
       document.getElementById("dubModal").classList.add("open");
     }
-
     function handleDubFile(e) {
-      const file = e.target.files[0];
-      if (!file) return;
+      const file = e.target.files[0]; if (!file) return;
       selectedDubUrl = URL.createObjectURL(file);
       selectedDubTitle = file.name.replace(/\.[^/.]+$/, "");
       document.getElementById("dubFileName").textContent = "✅ " + file.name;
     }
-
     function selectChip(el, type) {
       el.parentElement.querySelectorAll(".chip").forEach(c => c.classList.remove("selected"));
       el.classList.add("selected");
       if (type === "lang") selectedLang = el.textContent;
       if (type === "voice") selectedVoice = el.textContent;
     }
-
     function startDubbing() {
       const btn = document.getElementById("startDubBtn");
       btn.textContent = "⏳ Generating AI Voice..."; btn.disabled = true;
@@ -1041,28 +1137,25 @@
       }, 900);
     }
 
-    /* ================= MY PROFILE & DUBBED FOLDER ================= */
     function openMyProfile(tab = "reels") {
       document.getElementById("myProfileModal").classList.add("open");
       switchMyProfileTab(tab);
     }
-
     function switchMyProfileTab(tab) {
       currentMyTab = tab;
       document.getElementById("tabReels").classList.toggle("active", tab === "reels");
       document.getElementById("tabDubbed").classList.toggle("active", tab === "dubbed");
       renderMyProfileGrid();
     }
-
     function renderMyProfileGrid() {
       const grid = document.getElementById("myProfileGrid");
       if (currentMyTab === "reels") {
-        grid.innerHTML = myReels.length ? myReels.map((item, i) => `
+        grid.innerHTML = myReels.length ? myReels.map(item => `
           <div class="grid-card" onclick="playSpecificReel(${item.id})">
             <video src="${item.videoUrl}" muted playsinline></video>
             <div class="grid-title">${item.title}</div>
           </div>
-        `).join("") : `<div class="empty-state">No reels posted yet. Tap + to create one!</div>`;
+        `).join("") : `<div class="empty-state">No reels yet. Tap + to create one!</div>`;
       } else {
         grid.innerHTML = dubbedFolder.length ? dubbedFolder.map((item, i) => `
           <div class="grid-card" onclick="playDubbedFromFolder(${i})">
@@ -1073,10 +1166,8 @@
         `).join("") : `<div class="empty-state">No dubbed videos yet. Tap 🌐 Save Dub!</div>`;
       }
     }
-
     function playDubbedFromFolder(i) {
-      const item = dubbedFolder[i];
-      if (!item) return;
+      const item = dubbedFolder[i]; if (!item) return;
       isMuted = false; updateSoundIcon();
       reels.unshift({
         id: Date.now(), creator: "@azam_creator",
@@ -1085,9 +1176,7 @@
         summary: `• Dubbed in ${item.lang} using ${item.voice}.`,
         activeLang: item.lang, dubVoice: item.voice, likes: 1, liked: true, videoUrl: item.videoUrl
       });
-      renderFeed();
-      closeModal("myProfileModal");
-      scrollToTopFeed();
+      renderFeed(); closeModal("myProfileModal"); scrollToTopFeed();
       speakDub(item.lang, item.voice);
       showToast(`🔊 Playing AI Dub (${item.lang})`);
     }
