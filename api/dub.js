@@ -42,7 +42,8 @@ module.exports = async (req, res) => {
       const form = new FormData();
       form.append("target_lang", targetLang);
       form.append("mode", "automatic");
-
+      
+form.append("watermark", "true");
       if (fileBase64) {
         const buf = Buffer.from(fileBase64, "base64");
         const blob = new Blob([buf], { type: mimeType || "video/mp4" });
