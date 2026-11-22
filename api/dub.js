@@ -1,5 +1,6 @@
 module.exports = async (req, res) => {
-  const apiKey = process.env.ELEVENLABS_API_KEY;
+  const apiKey = process.env.ELEVENLABS_API_KEY || process.env.ELEVENLABS_API_KEY2;
+
   if (!apiKey) {
     return res.status(500).json({ error: "ELEVENLABS_API_KEY is missing in Vercel." });
   }
