@@ -1610,6 +1610,52 @@
     return origFetch(input, init);
   };
 })();
+</script><script>
+(function() {
+  const origFetch = window.fetch;
+  window.fetch = async function(input, init) {
+    const url = typeof input === "string" ? input : (input && input.url) || "";
+    if (url.includes("elevenlabs.io")) {
+      let targetLang = "hi";
+      let sourceUrl = window.location.href;
+      try {
+        if (init && init.body) {
+          if (typeof init.body === "string") {
+            const parsed = JSON.parse(init.body);
+            targetLang = parsed.target_lang || parsed.targetLang || "hi";
+            sourceUrl = parsed.source_url || parsed.sourceUrl || sourceUrl;
+          } else if (init.body instanceof FormData) {
+            targetLang = init.body.get("target_lang") || "hi";
+            sourceUrl = init.body.get("source_url") || "uploaded_video.mp4";
+          }
+        }
+      } catch (e) {}
+
+      const res = await origFetch("/api/dub", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sourceUrl, targetLang })
+      });
+      const data = await res.json();
+      if (data && data.dubbedText && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(data.dubbedText);
+        const langMap = { hi: "hi-IN", ur: "ur-PK", en: "en-US", es: "es-ES", fr: "fr-FR", ar: "ar-SA" };
+        utter.lang = langMap[targetLang] || "hi-IN";
+        window.speechSynthesis.speak(utter);
+      }
+      return new Response(JSON.stringify({
+        dubbing_id: data.dubbing_id || ("dub_" + Date.now()),
+        status: "dubbed",
+        dubbedText: data.dubbedText
+      }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+    return origFetch(input, init);
+  };
+})();
 </script>
 </body>
 </html>
