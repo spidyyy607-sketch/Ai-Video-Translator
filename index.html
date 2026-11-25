@@ -386,7 +386,7 @@
 
     <!-- ================= PERMANENT FIREBASE LOGIN SCREEN ================= -->
     <div id="authScreen">
-      <div class="version-badge">TRANSREEL v4.3 • CLOUD ACCOUNT</div>
+      <div class="version-badge">TRANSREEL v4.4 • CLOUD ACCOUNT</div>
       <div class="brand-logo">TR</div>
       <div class="brand-title">TransReel</div>
       <div class="brand-sub">Permanent Cloud Account • Your Dubbed Videos Stay Saved Forever.</div>
@@ -570,6 +570,7 @@
           <button class="chip" data-code="es" onclick="selectChip(this, 'lang')">Spanish 🇪🇸</button>
           <button class="chip" data-code="fr" onclick="selectChip(this, 'lang')">French 🇫🇷</button>
           <button class="chip" data-code="ar" onclick="selectChip(this, 'lang')">Arabic 🇸🇦</button>
+          <button class="chip" data-code="ur" onclick="selectChip(this, 'lang')">Urdu 🇵🇰</button>
         </div>
 
         <div id="dubProgressWrap" class="gen-progress-wrap">
@@ -692,7 +693,8 @@
       "English 🇺🇸": { code: "en-US", label: "EN 🇺🇸", text: "Hey everyone! This reel is live-dubbed into English using TransReel AI." },
       "Spanish 🇪🇸": { code: "es-ES", label: "ES 🇪🇸", text: "¡Hola amigos! Este video está doblado en vivo al español con TransReel AI." },
       "French 🇫🇷": { code: "fr-FR", label: "FR 🇫🇷", text: "Bonjour à tous! Cette vidéo est doublée en français avec TransReel AI." },
-      "Arabic 🇸🇦": { code: "ar-SA", label: "AR 🇸🇦", text: "مرحباً بالجميع! تمت دبلجة هذا الفيديو إلى اللغة العربية." }
+      "Arabic 🇸🇦": { code: "ar-SA", label: "AR 🇸🇦", text: "مرحباً بالجميع! تمت دبلجة هذا الفيديو إلى اللغة العربية." },
+      "Urdu 🇵🇰": { code: "ur-PK", label: "UR 🇵🇰", text: "السلام علیکم! یہ ویڈیو TransReel AI کے ذریعے اردو میں ڈب ہو رہی ہے۔" }
     };
 
     const creators = {
@@ -1265,15 +1267,23 @@
 
         if (!done) throw new Error("Video bada hai isliye dubbing mein zyada time lag raha hai, thodi der baad try karein.");
 
-        const realVideoUrl = `/api/dub?action=audio&id=${dubId}&lang=${selectedLangCode}`;
+        const spokenText = startData.dubbedText || (dubScripts[selectedLangLabel]?.text || "");
+        const playSourceUrl = (finalSourceUrl && finalSourceUrl.startsWith("http")) ? finalSourceUrl : demoUrls[0];
         const newDubItem = {
           id: Date.now(),
           title: selectedDubTitle,
           lang: selectedLangLabel,
           isRealDub: true,
-          videoUrl: realVideoUrl,
+          dubbedText: spokenText,
+          videoUrl: playSourceUrl,
           createdAt: Date.now()
         };
+        if ("speechSynthesis" in window && spokenText) {
+          window.speechSynthesis.cancel();
+          const u = new SpeechSynthesisUtterance(spokenText);
+          u.lang = dubScripts[selectedLangLabel]?.code || "hi-IN";
+          window.speechSynthesis.speak(u);
+        }
 
         // Save permanently to Firestore so it never disappears on refresh!
         if (currentUser) {
