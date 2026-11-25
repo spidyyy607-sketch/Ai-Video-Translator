@@ -3,10 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>TransReel v4.2 — 100MB Real AI Video Dubbing</title>
+  <title>TransReel v4.3 — Permanent Cloud Account & 100MB AI Dubbing</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
+
+  <!-- Firebase Compat SDKs (Auth + Firestore) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
   <style>
     :root {
       --bg-base: #060911;
@@ -77,10 +83,21 @@
       border: 1px solid var(--glass-border); border-radius: 24px; padding: 22px;
       box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
     }
-    .btn-google {
-      width: 100%; padding: 13px; border-radius: 14px; border: none; background: #fff; color: #0f172a;
-      font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
+    .auth-tabs {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+      background: rgba(6, 9, 17, 0.72); padding: 4px; border-radius: 12px; margin-bottom: 16px;
     }
+    .auth-tab-btn {
+      padding: 9px; border-radius: 9px; border: none; background: transparent;
+      color: var(--text-muted); font-weight: 700; font-size: 13px; cursor: pointer;
+    }
+    .auth-tab-btn.active { background: var(--accent-grad); color: #fff; }
+    .auth-error {
+      display: none; margin-bottom: 12px; padding: 10px 12px; border-radius: 12px;
+      background: rgba(255, 42, 109, 0.16); border: 1px solid rgba(255, 42, 109, 0.5);
+      color: #ff8fb1; font-size: 12px; line-height: 1.4;
+    }
+    .auth-error.show { display: block; }
     .divider { display: flex; align-items: center; gap: 10px; margin: 14px 0; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
     .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--glass-border); }
     .input-group { margin-bottom: 12px; }
@@ -260,7 +277,7 @@
     .create-pane { display: none; }
     .create-pane.active { display: block; }
 
-    /* Progress Bar (Used for both AI Video Gen & Cloudinary 100MB Upload) */
+    /* Progress Bar */
     .gen-progress-wrap {
       display: none; margin: 12px 0; padding: 12px; border-radius: 14px;
       background: rgba(0, 229, 255, 0.08); border: 1px solid rgba(0, 229, 255, 0.35);
@@ -367,24 +384,29 @@
   <div class="app-frame">
     <div id="toast" class="toast">Done!</div>
 
-    <!-- ================= LOGIN SCREEN ================= -->
+    <!-- ================= PERMANENT FIREBASE LOGIN SCREEN ================= -->
     <div id="authScreen">
-      <div class="version-badge">TRANSREEL v4.2 • 100MB CLOUD DUB</div>
+      <div class="version-badge">TRANSREEL v4.3 • CLOUD ACCOUNT</div>
       <div class="brand-logo">TR</div>
       <div class="brand-title">TransReel</div>
-      <div class="brand-sub">100MB Real ElevenLabs AI Video Dubbing, Paste Link & Global Reels.</div>
+      <div class="brand-sub">Permanent Cloud Account • Your Dubbed Videos Stay Saved Forever.</div>
       <div class="auth-card">
-        <button class="btn-google" onclick="loginUser()"><span>G</span> Continue with Google</button>
-        <div class="divider">or sign in with email</div>
+        <div class="auth-tabs">
+          <button id="authTabLogin" class="auth-tab-btn active" onclick="switchAuthMode('login')">Sign In</button>
+          <button id="authTabSignup" class="auth-tab-btn" onclick="switchAuthMode('signup')">Create Account</button>
+        </div>
+
+        <div id="authError" class="auth-error"></div>
+
         <div class="input-group">
           <label>Email Address</label>
-          <input type="email" class="input-field" value="creator@transreel.ai" />
+          <input type="email" id="authEmail" class="input-field" placeholder="apna@email.com" />
         </div>
         <div class="input-group">
-          <label>Password</label>
-          <input type="password" class="input-field" value="••••••••••" />
+          <label>Password (Min 6 characters)</label>
+          <input type="password" id="authPassword" class="input-field" placeholder="••••••••" />
         </div>
-        <button class="btn-primary" onclick="loginUser()">Sign In</button>
+        <button class="btn-primary" id="authSubmitBtn" onclick="handleAuthSubmit()">Sign In</button>
       </div>
     </div>
 
@@ -481,7 +503,6 @@
           <button class="btn-primary" id="v2vGenBtn" onclick="generateAIVideo('voice')" style="margin-bottom:10px;">🎬 Turn Voice into AI Video</button>
         </div>
 
-        <!-- 1% to 100% Live Progress Bar -->
         <div id="genProgressWrap" class="gen-progress-wrap">
           <div class="gen-progress-top">
             <span id="genProgressLabel">✨ Rendering AI Video...</span>
@@ -492,7 +513,6 @@
           </div>
         </div>
 
-        <!-- Watch Preview Player -->
         <div id="aiPreviewBox" class="ai-preview-box">
           <div class="preview-header">
             <span id="aiPreviewBadge">✨ Video Ready — Watch Before Posting</span>
@@ -548,11 +568,10 @@
           <button class="chip selected" data-code="hi" onclick="selectChip(this, 'lang')">Hindi 🇮🇳</button>
           <button class="chip" data-code="en" onclick="selectChip(this, 'lang')">English 🇺🇸</button>
           <button class="chip" data-code="es" onclick="selectChip(this, 'lang')">Spanish 🇪🇸</button>
-          <button class="chip" data-code="ur" onclick="selectChip(this, 'lang')">Urdu 🇵🇰</button>
+          <button class="chip" data-code="fr" onclick="selectChip(this, 'lang')">French 🇫🇷</button>
           <button class="chip" data-code="ar" onclick="selectChip(this, 'lang')">Arabic 🇸🇦</button>
         </div>
 
-        <!-- Cloudinary Upload Progress Bar -->
         <div id="dubProgressWrap" class="gen-progress-wrap">
           <div class="gen-progress-top">
             <span id="dubProgressLabel">☁️ Uploading video to Cloud...</span>
@@ -574,26 +593,26 @@
       <div class="modal-sheet">
         <div class="sheet-handle"></div>
         <div class="sheet-header">
-          <div class="sheet-title">@azam_creator ✓</div>
+          <div class="sheet-title" id="myProfileHandle">@creator ✓</div>
           <button class="close-btn" onclick="closeModal('myProfileModal')">✕</button>
         </div>
 
         <div class="ig-header">
-          <div class="ig-avatar-ring"><div class="ig-avatar-inner">AZ</div></div>
+          <div class="ig-avatar-ring"><div class="ig-avatar-inner" id="myProfileInitials">TR</div></div>
           <div class="ig-stats">
             <div><div class="ig-stat-num" id="myReelsCount">1</div><div class="ig-stat-lbl">Reels</div></div>
             <div><div class="ig-stat-num" id="dubbedCount">0</div><div class="ig-stat-lbl">Dubbed</div></div>
-            <div><div class="ig-stat-num">12.4K</div><div class="ig-stat-lbl">Followers</div></div>
+            <div><div class="ig-stat-num">Cloud</div><div class="ig-stat-lbl">Synced</div></div>
           </div>
         </div>
 
         <div class="ig-bio">
-          <div class="ig-fullname">Mohammad Azam</div>
-          <div class="ig-bio-text">🎬 TransReel Creator | 100MB ElevenLabs AI Dubbing<br>📍 Surat, India</div>
+          <div class="ig-fullname" id="myProfileName">TransReel Creator</div>
+          <div class="ig-bio-text" id="myProfileEmail">🎬 Permanent Cloud Account • Videos Saved in Firestore</div>
         </div>
 
         <div class="ig-btn-row">
-          <button class="ig-btn-secondary" onclick="showToast('Edit Profile coming soon!')">Edit Profile</button>
+          <button class="ig-btn-secondary" onclick="showToast('Cloud Sync Active ✓')">☁️ Cloud Synced</button>
           <button class="ig-btn-secondary" style="color:#ff6b93;" onclick="logoutUser()">Logout</button>
         </div>
 
@@ -641,6 +660,21 @@
   </div>
 
   <script>
+    // ================= FIREBASE CONFIG (transreel-app) =================
+    const firebaseConfig = {
+      apiKey: "AIzaSyBp-8rRAUrDUB1igMPdaoz2KWTnyL0i21I",
+      authDomain: "transreel-app.firebaseapp.com",
+      projectId: "transreel-app",
+      storageBucket: "transreel-app.firebasestorage.app",
+      messagingSenderId: "122842263727",
+      appId: "1:122842263727:web:f5d1ae5bf9193934f6a45a",
+      measurementId: "G-BJ0038BHZG"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
     // ================= CLOUDINARY CONFIG (100MB DIRECT UPLOAD) =================
     const CLOUDINARY_CLOUD_NAME = "qvveesgp";
     const CLOUDINARY_UPLOAD_PRESET = "transreel_upload";
@@ -657,7 +691,7 @@
       "Hindi 🇮🇳": { code: "hi-IN", label: "HI 🇮🇳", text: "नमस्ते दोस्तों! यह वीडियो TransReel AI से हिंदी में लाइव डब हो रहा है।" },
       "English 🇺🇸": { code: "en-US", label: "EN 🇺🇸", text: "Hey everyone! This reel is live-dubbed into English using TransReel AI." },
       "Spanish 🇪🇸": { code: "es-ES", label: "ES 🇪🇸", text: "¡Hola amigos! Este video está doblado en vivo al español con TransReel AI." },
-      "Urdu 🇵🇰": { code: "ur-PK", label: "UR 🇵🇰", text: "السلام علیکم! یہ ویڈیو TransReel AI کے ذریعے اردو میں لائیو ڈب ہو رہی ہے۔" },
+      "French 🇫🇷": { code: "fr-FR", label: "FR 🇫🇷", text: "Bonjour à tous! Cette vidéo est doublée en français avec TransReel AI." },
       "Arabic 🇸🇦": { code: "ar-SA", label: "AR 🇸🇦", text: "مرحباً بالجميع! تمت دبلجة هذا الفيديو إلى اللغة العربية." }
     };
 
@@ -695,7 +729,9 @@
       }
     ];
 
-    let myReels = [{ id: 101, title: "My First TransReel Upload", tags: "#TransReel #Creator", videoUrl: demoUrls[0] }];
+    let currentUser = null;
+    let authMode = "login";
+    let myReels = [];
     let dubbedFolder = [];
 
     let isMuted = false;
@@ -720,19 +756,118 @@
     let isRecording = false;
     let previewIndex = 0;
 
-    function loginUser() {
-      document.getElementById("authScreen").classList.add("hidden");
-      isMuted = false;
-      updateSoundIcon();
-      renderFeed();
-      updateCounts();
-      showToast("☁️ TransReel v4.2 — 100MB Real AI Dub Live!");
+    // ================= FIREBASE AUTHENTICATION & PERMANENT CLOUD SYNC =================
+    function switchAuthMode(mode) {
+      authMode = mode;
+      document.getElementById("authTabLogin").classList.toggle("active", mode === "login");
+      document.getElementById("authTabSignup").classList.toggle("active", mode === "signup");
+      document.getElementById("authSubmitBtn").textContent = mode === "login" ? "Sign In" : "Create Account";
+      hideAuthError();
     }
 
-    function logoutUser() {
+    function showAuthError(msg) {
+      const el = document.getElementById("authError");
+      el.textContent = msg;
+      el.classList.add("show");
+    }
+
+    function hideAuthError() {
+      document.getElementById("authError").classList.remove("show");
+    }
+
+    async function handleAuthSubmit() {
+      const email = document.getElementById("authEmail").value.trim();
+      const pass = document.getElementById("authPassword").value;
+      const btn = document.getElementById("authSubmitBtn");
+
+      if (!email || !pass) {
+        showAuthError("Email aur Password dono daalein.");
+        return;
+      }
+      if (pass.length < 6) {
+        showAuthError("Password kam se kam 6 characters ka hona chahiye.");
+        return;
+      }
+
+      hideAuthError();
+      btn.disabled = true;
+      btn.textContent = authMode === "login" ? "Signing in..." : "Creating account...";
+
+      try {
+        if (authMode === "login") {
+          await auth.signInWithEmailAndPassword(email, pass);
+        } else {
+          await auth.createUserWithEmailAndPassword(email, pass);
+          showToast("🎉 Account ban gaya! Ab hamesha save rahega.");
+        }
+      } catch (err) {
+        let msg = err.message;
+        if (err.code === "auth/user-not-found" || err.code === "auth/invalid-credential") {
+          msg = "Account nahi mila ya password galat hai. Naya account banane ke liye 'Create Account' tab chunein.";
+        } else if (err.code === "auth/email-already-in-use") {
+          msg = "Ye email pehle se registered hai. 'Sign In' par tap karein.";
+        }
+        showAuthError(msg);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = authMode === "login" ? "Sign In" : "Create Account";
+      }
+    }
+
+    // Auto-login listener: keeps user signed in forever across refreshes
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        currentUser = user;
+        document.getElementById("authScreen").classList.add("hidden");
+
+        // Update profile UI with user email
+        const namePart = user.email ? user.email.split("@")[0] : "creator";
+        const initials = namePart.slice(0, 2).toUpperCase();
+        document.getElementById("myProfileHandle").textContent = "@" + namePart + " ✓";
+        document.getElementById("myProfileInitials").textContent = initials;
+        document.getElementById("myProfileName").textContent = namePart;
+        document.getElementById("myProfileEmail").textContent = "📧 " + user.email + " • Cloud Synced ✓";
+
+        isMuted = false;
+        updateSoundIcon();
+        renderFeed();
+        await loadUserDataFromCloud(user.uid);
+        showToast("☁️ Cloud Account Connected!");
+      } else {
+        currentUser = null;
+        myReels = [];
+        dubbedFolder = [];
+        updateCounts();
+        document.getElementById("authScreen").classList.remove("hidden");
+      }
+    });
+
+    async function loadUserDataFromCloud(uid) {
+      try {
+        // Load saved Dubbed videos
+        const dubSnap = await db.collection("users").doc(uid).collection("dubbed")
+          .orderBy("createdAt", "desc").get();
+        dubbedFolder = dubSnap.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
+
+        // Load saved My Reels
+        const reelSnap = await db.collection("users").doc(uid).collection("reels")
+          .orderBy("createdAt", "desc").get();
+        myReels = reelSnap.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
+
+        updateCounts();
+        if (document.getElementById("myProfileModal").classList.contains("open")) {
+          renderMyProfileGrid();
+        }
+      } catch (err) {
+        console.error("Cloud load error:", err);
+      }
+    }
+
+    async function logoutUser() {
       stopSpeech();
       closeModal("myProfileModal");
-      document.getElementById("authScreen").classList.remove("hidden");
+      await auth.signOut();
+      showToast("Logged out successfully");
     }
 
     function toggleDualSub() {
@@ -809,7 +944,7 @@
 
     function renderFeed() {
       const container = document.getElementById("feedContainer");
-      const langKeys = ["ORIG", "Hindi 🇮🇳", "English 🇺🇸", "Spanish 🇪🇸", "Urdu 🇵🇰"];
+      const langKeys = ["ORIG", "Hindi 🇮🇳", "English 🇺🇸", "Spanish 🇪🇸", "French 🇫🇷"];
 
       container.innerHTML = reels.map((r, idx) => {
         const c = creators[r.creator] || creators["@azam_creator"];
@@ -951,7 +1086,7 @@
       }
     }
 
-    /* ================= REAL AI DUBBING (CLOUDINARY 100MB + PASTE LINK + ELEVENLABS) ================= */
+    /* ================= REAL AI DUBBING (CLOUDINARY 100MB + PASTE LINK + ELEVENLABS + FIRESTORE SAVE) ================= */
     function openDubModal() { openDubModalByIndex(activeReelIndex || 0); }
 
     function openDubModalByIndex(idx) {
@@ -1051,16 +1186,14 @@
         let finalSourceUrl = null;
 
         if (pastedUrl && pastedUrl.startsWith("http")) {
-          // 1. Pasted Link (YouTube / Instagram / MP4)
           finalSourceUrl = pastedUrl;
           statusBox.textContent = "🔗 Sending pasted link to ElevenLabs AI...";
         } else if (selectedDubFile) {
-          // 2. Direct Gallery File (up to 100MB) -> Cloudinary first
           progWrap.classList.add("show");
           progLabel.textContent = "☁️ Uploading video to Cloudinary...";
           progFill.style.width = "0%";
           progPct.textContent = "0%";
-          statusBox.textContent = "☁️ Uploading your gallery video to cloud (bypassing 3.5MB limit)...";
+          statusBox.textContent = "☁️ Uploading your gallery video to cloud...";
           btn.textContent = "☁️ Uploading to Cloud...";
 
           finalSourceUrl = await uploadToCloudinary(selectedDubFile, (pct) => {
@@ -1070,7 +1203,6 @@
           progWrap.classList.remove("show");
           statusBox.textContent = "✅ Cloud upload complete! Sending to ElevenLabs AI...";
         } else if (selectedDubUrl && selectedDubUrl.startsWith("blob:")) {
-          // 3. Feed Reel uploaded from Gallery -> fetch blob -> Cloudinary
           const blobRes = await fetch(selectedDubUrl);
           const blob = await blobRes.blob();
           if (blob.size > 100 * 1024 * 1024) {
@@ -1090,14 +1222,12 @@
           progWrap.classList.remove("show");
           statusBox.textContent = "✅ Cloud upload complete! Sending to ElevenLabs AI...";
         } else if (selectedDubUrl && selectedDubUrl.startsWith("http")) {
-          // 4. Existing Public Feed Reel
           finalSourceUrl = selectedDubUrl;
           statusBox.textContent = "⏳ Sending reel to ElevenLabs AI...";
         } else {
           throw new Error("Koi reel select karein, gallery se video upload karein, ya link paste karein.");
         }
 
-        // Send public URL to Vercel backend -> ElevenLabs
         const startRes = await fetch("/api/dub", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -1136,21 +1266,28 @@
         if (!done) throw new Error("Video bada hai isliye dubbing mein zyada time lag raha hai, thodi der baad try karein.");
 
         const realVideoUrl = `/api/dub?action=audio&id=${dubId}&lang=${selectedLangCode}`;
-        dubbedFolder.unshift({
+        const newDubItem = {
           id: Date.now(),
           title: selectedDubTitle,
           lang: selectedLangLabel,
           isRealDub: true,
-          videoUrl: realVideoUrl
-        });
+          videoUrl: realVideoUrl,
+          createdAt: Date.now()
+        };
 
+        // Save permanently to Firestore so it never disappears on refresh!
+        if (currentUser) {
+          await db.collection("users").doc(currentUser.uid).collection("dubbed").add(newDubItem);
+        }
+
+        dubbedFolder.unshift(newDubItem);
         updateCounts();
         statusBox.classList.remove("show");
         progWrap.classList.remove("show");
         btn.disabled = false;
         btn.textContent = "🎙️ Start Real AI Dubbing";
         closeModal("dubModal");
-        showToast(`🎉 Real AI Dub Ready (${selectedLangLabel})!`);
+        showToast(`🎉 Saved to Cloud (${selectedLangLabel})!`);
         openMyProfile("dubbed");
       } catch (err) {
         progWrap.classList.remove("show");
@@ -1160,7 +1297,7 @@
       }
     }
 
-    /* ================= CREATE POST + 1% TO 100% PROGRESS + WORKING PREVIEW ================= */
+    /* ================= CREATE POST ================= */
     function openCreateModal() {
       document.querySelectorAll(".reel-video").forEach(v => v.pause());
       stopSpeech();
@@ -1298,22 +1435,32 @@
       btn.textContent = "✨ Done!"; setTimeout(() => btn.textContent = "✨ Generate with AI", 1000);
     }
 
-    function publishPost() {
+    async function publishPost() {
       if (!selectedPostUrl) { showToast("Pehle video upload ya generate kijiye!"); return; }
       const pVid = document.getElementById("aiPreviewVideo"); if (pVid) pVid.pause();
       const title = document.getElementById("postTitle").value.trim() || "New TransReel Video";
       const tags = document.getElementById("postTags").value.trim() || "#TransReel #AIVideo";
       const newId = Date.now();
+
+      const newReelItem = { id: newId, title, tags, videoUrl: selectedPostUrl, createdAt: Date.now() };
       reels.unshift({
         id: newId, creator: "@azam_creator", title, tags,
         origSub: "Original: Created on TransReel", summary: "• Newly published creator video.",
         activeLang: "ORIG", isRealDub: false, likes: 1, liked: true, videoUrl: selectedPostUrl
       });
-      myReels.unshift({ id: newId, title, tags, videoUrl: selectedPostUrl });
+      myReels.unshift(newReelItem);
+
+      // Save to Firestore if it's a cloud URL
+      if (currentUser && selectedPostUrl.startsWith("http")) {
+        try {
+          await db.collection("users").doc(currentUser.uid).collection("reels").add(newReelItem);
+        } catch (e) { console.error("Reel save error:", e); }
+      }
+
       updateCounts(); isMuted = false; updateSoundIcon(); renderFeed(); scrollToTopFeed();
       selectedPostUrl = null;
       document.getElementById("aiPreviewBox").classList.remove("show");
-      closeModal("createModal"); showToast("🚀 Published to Feed!");
+      closeModal("createModal"); showToast("🚀 Published & Saved!");
     }
 
     /* ================= PROFILES ================= */
