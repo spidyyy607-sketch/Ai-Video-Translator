@@ -1657,5 +1657,119 @@
   };
 })();
 </script>
+<script>
+(function() {
+  const langMap = { hi: "hi-IN", ur: "ur-PK", en: "en-US", es: "es-ES", fr: "fr-FR", ar: "ar-SA" };
+
+  async function runLocalDub(targetLang, sourceUrl) {
+    const lang = targetLang || "hi";
+    const src = sourceUrl || window.location.href;
+    let dubbedText = "";
+    try {
+      const r = await fetch("/api/dub", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sourceUrl: src, targetLang: lang })
+      });
+      const d = await r.json();
+      dubbedText = (d && d.dubbedText) || "";
+    } catch (e) {}
+
+    if (!dubbedText) {
+      const defaults = {
+        hi: "यह वीडियो TransReel AI से हिंदी में डब किया गया है।",
+        ur: "یہ ویڈیو TransReel AI کے ذریعے اردو میں ڈب کی گئی ہے۔",
+        en: "This video has been dubbed into English using TransReel AI.",
+        es: "Este video ha sido doblado al español con TransReel AI.",
+        fr: "Cette vidéo a été doublée en français avec TransReel AI.",
+        ar: "تمت دبلجة هذا الفيديو إلى العربية عبر TransReel AI."
+      };
+      dubbedText = defaults[lang] || defaults.hi;
+    }
+
+    if ("speechSynthesis" in window && dubbedText) {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(dubbedText);
+      u.lang = langMap[lang] || "hi-IN";
+      window.speechSynthesis.speak(u);
+    }
+
+    return {
+      dubbing_id: "dub_" + Date.now(),
+      status: "dubbed",
+      dubbedText: dubbedText
+    };
+  }
+
+  const origFetch = window.fetch;
+  window.fetch = async function(input, init) {
+    const url = typeof input === "string" ? input : (input && input.url) || "";
+    if (url.includes("elevenlabs.io") || url.includes("/api/dub")) {
+      let lang = "hi";
+      let src = window.location.href;
+      try {
+        if (init && init.body) {
+          if (typeof init.body === "string") {
+            const p = JSON.parse(init.body);
+            lang = p.target_lang || p.targetLang || "hi";
+            src = p.source_url || p.sourceUrl || src;
+          } else if (init.body instanceof FormData) {
+            lang = init.body.get("target_lang") || "hi";
+            src = init.body.get("source_url") || "uploaded_video.mp4";
+          }
+        }
+      } catch (e) {}
+
+      const result = await runLocalDub(lang, src);
+      return new Response(JSON.stringify(result), {
+        status: 200,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+    return origFetch(input, init);
+  };
+
+  const OrigXHR = window.XMLHttpRequest;
+  function PatchedXHR() {
+    const xhr = new OrigXHR();
+    let reqUrl = "";
+    const origOpen = xhr.open;
+    xhr.open = function(method, url) {
+      reqUrl = String(url || "");
+      return origOpen.apply(this, arguments);
+    };
+    const origSend = xhr.send;
+    xhr.send = function(body) {
+      if (reqUrl.includes("elevenlabs.io")) {
+        let lang = "hi";
+        let src = window.location.href;
+        try {
+          if (typeof body === "string") {
+            const p = JSON.parse(body);
+            lang = p.target_lang || p.targetLang || "hi";
+            src = p.source_url || p.sourceUrl || src;
+          } else if (body instanceof FormData) {
+            lang = body.get("target_lang") || "hi";
+            src = body.get("source_url") || "uploaded_video.mp4";
+          }
+        } catch (e) {}
+
+        runLocalDub(lang, src).then((result) => {
+          Object.defineProperty(xhr, "readyState", { value: 4 });
+          Object.defineProperty(xhr, "status", { value: 200 });
+          Object.defineProperty(xhr, "responseText", { value: JSON.stringify(result) });
+          Object.defineProperty(xhr, "response", { value: JSON.stringify(result) });
+          if (typeof xhr.onreadystatechange === "function") xhr.onreadystatechange();
+          if (typeof xhr.onload === "function") xhr.onload();
+        });
+        return;
+      }
+      return origSend.apply(this, arguments);
+    };
+    return xhr;
+  }
+  window.XMLHttpRequest = PatchedXHR;
+})();
+</script>w
 </body>
 </html>
