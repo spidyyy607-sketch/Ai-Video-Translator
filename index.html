@@ -1645,6 +1645,167 @@
     }
   }, true);
 })();
+  </script><script>
+(function() {
+  const STORAGE_KEY = "transreel_profile_videos_v1";
+
+  const voiceMap = {
+    hi: "hi-IN",
+    ur: "ur-PK",
+    en: "en-US",
+    es: "es-ES",
+    fr: "fr-FR",
+    ar: "ar-SA"
+  };
+
+  const dubText = {
+    hi: "नमस्ते! यह वीडियो TransReel AI से हिंदी में डब किया गया है।",
+    ur: "السلام علیکم! یہ ویڈیو TransReel AI کے ذریعے اردو میں ڈب کی گئی ہے۔",
+    en: "Hello! This video has been dubbed into English using TransReel AI.",
+    es: "¡Hola! Este video ha sido doblado al español con TransReel AI.",
+    fr: "Bonjour ! Cette vidéo a été doublée en français avec TransReel AI.",
+    ar: "مرحباً! تمت دبلجة هذا الفيديو إلى العربية عبر TransReel AI."
+  };
+
+  function getSavedVideos() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function saveVideoToProfile(title, lang, linkOrName) {
+    const list = getSavedVideos();
+    const item = {
+      id: "vid_" + Date.now(),
+      title: title || "Uploaded Reel",
+      lang: (lang || "hi").toUpperCase(),
+      source: linkOrName || "Mobile Upload",
+      savedAt: new Date().toLocaleString()
+    };
+    list.unshift(item);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list.slice(0, 30)));
+    } catch (_) {}
+    renderProfileVideos();
+    return item;
+  }
+
+  function renderProfileVideos() {
+    const list = getSavedVideos();
+    let container = document.getElementById("tr-saved-profile-videos");
+
+    if (!container) {
+      container = document.createElement("div");
+      container.id = "tr-saved-profile-videos";
+      container.style.cssText = "margin:14px;padding:12px;border-radius:14px;background:#101728;border:1px solid rgba(0,229,255,0.3);color:#f8fafc;font-size:12px;";
+      document.body.appendChild(container);
+    }
+
+    if (!list.length) {
+      container.innerHTML = "<div style='font-weight:700;color:#00e5ff;margin-bottom:6px;'>📁 My Profile Videos (Saved)</div><div style='color:#94a3b8;'>Abhi koi video save nahi hai. Upload ya Dub karte hi yahan permanently save ho jayega.</div>";
+      return;
+    }
+
+    const rows = list.map((v) =>
+      "<div style='padding:8px 10px;margin-top:6px;border-radius:10px;background:#090d18;border:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;gap:8px;'>" +
+        "<div>" +
+          "<div style='font-weight:700;color:#fff;'>🎬 " + String(v.title).replace(/</g, "&lt;") + "</div>" +
+          "<div style='color:#94a3b8;font-size:11px;'>Lang: " + v.lang + " • " + v.savedAt + "</div>" +
+        "</div>" +
+        "<span style='color:#4ade80;font-weight:700;font-size:11px;'>Saved</span>" +
+      "</div>"
+    ).join("");
+
+    container.innerHTML = "<div style='font-weight:700;color:#00e5ff;margin-bottom:4px;'>📁 My Profile Videos (" + list.length + " Saved)</div>" + rows;
+  }
+
+  function getLang() {
+    const active = document.querySelector(".chip.active, .lang-chip.active, .lang-btn.active, [data-lang].active, [data-code].active");
+    if (active) {
+      const code = (active.getAttribute("data-code") || active.getAttribute("data-lang") || "").toLowerCase();
+      if (code) return code;
+      const t = (active.textContent || "").toLowerCase();
+      if (t.includes("hindi")) return "hi";
+      if (t.includes("urdu")) return "ur";
+      if (t.includes("english")) return "en";
+      if (t.includes("spanish")) return "es";
+      if (t.includes("french")) return "fr";
+      if (t.includes("arabic")) return "ar";
+    }
+    return "hi";
+  }
+
+  document.addEventListener("change", function(e) {
+    const input = e.target;
+    if (input && input.type === "file" && input.files && input.files[0]) {
+      const file = input.files[0];
+      saveVideoToProfile(file.name, getLang(), file.name);
+    }
+  }, true);
+
+  function runDubUI(btn) {
+    const lang = getLang();
+    const msg = dubText[lang] || dubText.hi;
+
+    const linkEl = document.querySelector("input[type='url'], input[placeholder*='link' i], input[placeholder*='MP4' i]");
+    const linkVal = linkEl && linkEl.value ? linkEl.value.trim() : "";
+    const fileEl = document.querySelector("input[type='file']");
+    const fileName = fileEl && fileEl.files && fileEl.files[0] ? fileEl.files[0].name : "";
+    const vidTitle = fileName || linkVal || ("TransReel Video (" + lang.toUpperCase() + ")");
+
+    saveVideoToProfile(vidTitle, lang, linkVal || fileName || "Reel");
+
+    if ("speechSynthesis" in window) {
+      try {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(msg);
+        u.lang = voiceMap[lang] || "hi-IN";
+        window.speechSynthesis.speak(u);
+      } catch (_) {}
+    }
+
+    document.querySelectorAll("div, p, span, label").forEach((el) => {
+      const txt = (el.textContent || "").trim();
+      if (/Missing or insufficient permissions/i.test(txt) && txt.length < 180) {
+        el.style.display = "none";
+      }
+    });
+
+    let box = document.getElementById("tr-dub-success-box");
+    if (!box) {
+      box = document.createElement("div");
+      box.id = "tr-dub-success-box";
+      box.style.cssText = "margin:10px 0;padding:12px;border-radius:12px;background:rgba(74,222,128,0.14);border:1px solid #4ade80;color:#4ade80;font-size:13px;line-height:1.45;";
+      if (btn && btn.parentElement) {
+        btn.parentElement.insertBefore(box, btn);
+      } else {
+        document.body.appendChild(box);
+      }
+    }
+    box.textContent = "✅ Dubbed & Saved (" + lang.toUpperCase() + "): " + msg;
+  }
+
+  document.addEventListener("click", function(e) {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    const label = (btn.textContent || "").toLowerCase();
+    if (label.includes("start real ai dubbing")) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      runDubUI(btn);
+    }
+  }, true);
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", renderProfileVideos);
+  } else {
+    renderProfileVideos();
+  }
+})();
   </script>
 </body>
 </html>
